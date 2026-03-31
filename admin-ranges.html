@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>إدارة نطاقات المعرفات - البيت الرقمي</title>
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display-all" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ios-bg-primary: #0A2F2F;
+            --glass-bg: rgba(12, 45, 45, 0.65);
+            --glass-border: 0.5px solid rgba(247, 249, 249, 0.15);
+            --glass-blur: blur(40px) saturate(210%) brightness(1.1);
+            --ios-orange: #FF9F1C;
+            --ios-green: #2EC4B6;
+            --ios-red: #E71D36;
+            --ios-purple: #5A9A9A;
+            --ios-label-primary: #F7F9F9;
+            --ios-label-secondary: rgba(247, 249, 249, 0.8);
+            --radius-xl: 28px;
+            --sat: env(safe-area-inset-top);
+            --sab: env(safe-area-inset-bottom);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', 'Cairo', -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--ios-bg-primary);
+            color: var(--ios-label-primary);
+            direction: rtl;
+            min-height: 100vh;
+            padding-top: var(--sat);
+            padding-bottom: var(--sab);
+        }
+
+        .admin-header {
+            background: rgba(10, 47, 47, 0.95);
+            backdrop-filter: blur(60px);
+            border-bottom: var(--glass-border);
+            padding: 16px 24px;
+            padding-top: calc(16px + var(--sat));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-header h1 {
+            font-size: 20px;
+            color: var(--ios-green);
+        }
+
+        .back-btn {
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--ios-label-primary);
+            border: var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .admin-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .section-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            color: var(--ios-orange);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--ios-label-secondary);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .ios-input, .ios-select {
+            width: 100%;
+            background: rgba(247, 249, 249, 0.1);
+            border: var(--glass-border);
+            border-radius: 14px;
+            padding: 16px;
+            color: var(--ios-label-primary);
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .ios-input:focus, .ios-select:focus {
+            border-color: var(--ios-orange);
+            box-shadow: 0 0 0 4px rgba(255, 159, 28, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--ios-green) 0%, #25A89C 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(46, 196, 182, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--ios-label-primary);
+            border: var(--glass-border);
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 12px;
+        }
+
+        .btn-delete {
+            background: rgba(231, 29, 54, 0.2);
+            color: var(--ios-red);
+            border: 1px solid rgba(231, 29, 54, 0.3);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: rgba(231, 29, 54, 0.4);
+        }
+
+        .range-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .range-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .range-item:hover {
+            background: rgba(0, 0, 0, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .range-info {
+            font-size: 15px;
+        }
+
+        .range-info .cat {
+            font-weight: 700;
+            color: var(--ios-orange);
+            margin-left: 10px;
+        }
+
+        .range-info .subcat {
+            color: var(--ios-green);
+        }
+
+        .range-info .range {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--ios-label-primary);
+            margin-top: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--ios-label-secondary);
+        }
+
+        .toast {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 60, 60, 0.95);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <a href="admin.html" class="back-btn">← رجوع</a>
+        <h1>📊 إدارة نطاقات المعرفات</h1>
+        <div style="width: 60px;"></div>
+    </header>
+
+    <div class="admin-content">
+        <!-- Add/Edit Range Section -->
+        <div class="section-card">
+            <div class="section-title">➕ إضافة نطاق جديد</div>
+
+            <div class="form-group">
+                <label class="form-label">القسم الرئيسي</label>
+                <select id="parentCategory" class="ios-select">
+                    <option value="">اختر القسم الرئيسي</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">القسم الفرعي</label>
+                <select id="subCategory" class="ios-select">
+                    <option value="">اختر القسم الفرعي</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">من (رقم البداية)</label>
+                <input type="number" id="startRange" class="ios-input" placeholder="مثال: 1000" min="1" max="9999">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">إلى (رقم النهاية)</label>
+                <input type="number" id="endRange" class="ios-input" placeholder="مثال: 1200" min="1" max="9999">
+            </div>
+
+            <button class="btn-primary" onclick="saveRange()">💾 حفظ النطاق</button>
+        </div>
+
+        <!-- Existing Ranges List -->
+        <div class="section-card">
+            <div class="section-title">📋 النطاقات الحالية</div>
+            <div id="rangesList" class="range-list">
+                <div class="empty-state">جاري التحميل...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            deleteDoc,
+            onSnapshot,
+            query,
+            orderBy
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
+            authDomain: "hussain-1290b.firebaseapp.com",
+            projectId: "hussain-1290b",
+            storageBucket: "hussain-1290b.firebasestorage.app",
+            messagingSenderId: "798281706738",
+            appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let categories = [];
+        let subcategories = [];
+        let ranges = [];
+
+        // Check auth
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin.html';
+        }
+
+        // Load categories
+        onSnapshot(collection(db, "categories"), (snapshot) => {
+            categories = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") categories.push({ id: doc.id, name: doc.data().name });
+            });
+            updateParentSelect();
+        });
+
+        // Load subcategories
+        onSnapshot(collection(db, "subcategories"), (snapshot) => {
+            subcategories = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") subcategories.push({ id: doc.id, ...doc.data() });
+            });
+            updateSubcategorySelect();
+        });
+
+        // Load ranges
+        const rangesQuery = query(collection(db, "itemIdRanges"), orderBy("startRange", "asc"));
+        onSnapshot(rangesQuery, (snapshot) => {
+            ranges = [];
+            snapshot.forEach((doc) => {
+                ranges.push({ id: doc.id, ...doc.data() });
+            });
+            renderRanges();
+        });
+
+        function updateParentSelect() {
+            const select = document.getElementById('parentCategory');
+            select.innerHTML = '<option value="">اختر القسم الرئيسي</option>' +
+                categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        }
+
+        document.getElementById('parentCategory').addEventListener('change', function() {
+            updateSubcategorySelect();
+        });
+
+        function updateSubcategorySelect() {
+            const parent = document.getElementById('parentCategory').value;
+            const subSelect = document.getElementById('subCategory');
+            const filtered = subcategories.filter(s => s.parentCategory === parent);
+            subSelect.innerHTML = '<option value="">اختر القسم الفرعي</option>' +
+                filtered.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+        }
+
+        function renderRanges() {
+            const container = document.getElementById('rangesList');
+            if (ranges.length === 0) {
+                container.innerHTML = '<div class="empty-state">لا توجد نطاقات بعد</div>';
+                return;
+            }
+
+            container.innerHTML = ranges.map(range => `
+                <div class="range-item">
+                    <div class="range-info">
+                        <span class="cat">${range.parentCategory}</span>
+                        <span class="subcat">${range.subCategory}</span>
+                        <div class="range">${range.startRange} - ${range.endRange}</div>
+                    </div>
+                    <button class="btn-delete" onclick="deleteRange('${range.id}')">🗑️ حذف</button>
+                </div>
+            `).join('');
+        }
+
+        window.saveRange = async function() {
+            const parent = document.getElementById('parentCategory').value;
+            const sub = document.getElementById('subCategory').value;
+            const start = parseInt(document.getElementById('startRange').value);
+            const end = parseInt(document.getElementById('endRange').value);
+
+            if (!parent || !sub) {
+                showToast("❌ اختر القسم الرئيسي والفرعي");
+                return;
+            }
+
+            if (isNaN(start) || isNaN(end) || start < 1 || end > 9999 || start > end) {
+                showToast("❌ نطاق غير صحيح (يجب أن يكون 1-9999 والبداية ≤ النهاية)");
+                return;
+            }
+
+            // Check for overlapping ranges
+            const overlapping = ranges.some(r => 
+                r.parentCategory === parent && r.subCategory === sub && 
+                ((start >= r.startRange && start <= r.endRange) ||
+                 (end >= r.startRange && end <= r.endRange) ||
+                 (start <= r.startRange && end >= r.endRange))
+            );
+
+            if (overlapping) {
+                showToast("❌ هذا النطاق يتداخل مع نطاق موجود لهذا القسم الفرعي");
+                return;
+            }
+
+            try {
+                const rangeRef = doc(collection(db, "itemIdRanges"));
+                await setDoc(rangeRef, {
+                    parentCategory: parent,
+                    subCategory: sub,
+                    startRange: start,
+                    endRange: end,
+                    createdAt: new Date().toISOString()
+                });
+
+                showToast("✅ تم حفظ النطاق بنجاح");
+                // Reset form
+                document.getElementById('parentCategory').value = '';
+                document.getElementById('subCategory').innerHTML = '<option value="">اختر القسم الفرعي</option>';
+                document.getElementById('startRange').value = '';
+                document.getElementById('endRange').value = '';
+            } catch (error) {
+                console.error("Error saving range:", error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        window.deleteRange = async function(id) {
+            if (!confirm("هل أنت متأكد من حذف هذا النطاق؟")) return;
+
+            try {
+                await deleteDoc(doc(db, "itemIdRanges", id));
+                showToast("🗑️ تم حذف النطاق");
+            } catch (error) {
+                console.error("Error deleting range:", error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

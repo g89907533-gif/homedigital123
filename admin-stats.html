@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>الإحصائيات - لوحة الإدارة</title>
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display-all" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ios-bg-primary: #0A2F2F;
+            --glass-bg: rgba(12, 45, 45, 0.65);
+            --glass-border: 0.5px solid rgba(247, 249, 249, 0.15);
+            --glass-blur: blur(40px) saturate(210%) brightness(1.1);
+            --ios-orange: #FF9F1C;
+            --ios-green: #2EC4B6;
+            --ios-red: #E71D36;
+            --ios-purple: #5A9A9A;
+            --ios-label-primary: #F7F9F9;
+            --ios-label-secondary: rgba(247, 249, 249, 0.8);
+            --ios-spring: cubic-bezier(0.25, 1, 0.2, 1);
+            --radius-xl: 28px;
+            --sat: env(safe-area-inset-top);
+            --sab: env(safe-area-inset-bottom);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', 'Cairo', -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--ios-bg-primary);
+            color: var(--ios-label-primary);
+            direction: rtl;
+            min-height: 100vh;
+            padding-top: var(--sat);
+            padding-bottom: var(--sab);
+        }
+
+        .admin-header {
+            background: rgba(10, 47, 47, 0.95);
+            backdrop-filter: blur(60px);
+            border-bottom: var(--glass-border);
+            padding: 16px 24px;
+            padding-top: calc(16px + var(--sat));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-header h1 {
+            font-size: 20px;
+            color: #FFD60A;
+        }
+
+        .back-btn {
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--ios-label-primary);
+            border: var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .admin-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--ios-label-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: var(--ios-label-secondary);
+            font-size: 14px;
+        }
+
+        /* Orders Section */
+        .section-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            color: var(--ios-orange);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            background: rgba(247, 249, 249, 0.1);
+            border: var(--glass-border);
+            color: var(--ios-label-secondary);
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .filter-tab.active {
+            background: linear-gradient(135deg, var(--ios-orange) 0%, #E88D0C 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .order-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+
+        .order-card:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(247, 249, 249, 0.1);
+        }
+
+        .order-id {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .order-date {
+            color: var(--ios-label-secondary);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-pending { background: rgba(255, 159, 28, 0.2); color: var(--ios-orange); }
+        .status-delivered { background: rgba(46, 196, 182, 0.2); color: var(--ios-green); }
+        .status-cancelled { background: rgba(231, 29, 54, 0.2); color: var(--ios-red); }
+
+        .order-info {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .info-icon {
+            color: var(--ios-orange);
+            width: 20px;
+        }
+
+        .order-items {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid rgba(46, 196, 182, 0.3);
+            padding-top: 12px;
+            margin-top: 12px;
+            font-weight: 800;
+            color: var(--ios-green);
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-success {
+            flex: 1;
+            background: linear-gradient(135deg, var(--ios-green) 0%, #25A89C 100%);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .btn-danger {
+            flex: 1;
+            background: rgba(231, 29, 54, 0.2);
+            color: var(--ios-red);
+            border: 1px solid rgba(231, 29, 54, 0.3);
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-delete {
+            background: rgba(231, 29, 54, 0.3);
+            color: var(--ios-red);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--ios-label-secondary);
+        }
+
+        .toast {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 60, 60, 0.95);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <a href="admin.html" class="back-btn">← رجوع</a>
+        <h1>📊 الإحصائيات</h1>
+        <a href="admin-stats-advanced.html" style="background: rgba(46, 196, 182, 0.2); color: var(--ios-green); border: 1px solid rgba(46, 196, 182, 0.3); padding: 10px 20px; border-radius: 12px; text-decoration: none; font-size: 14px; cursor: pointer; transition: all 0.3s;">📈 متقدمة</a>
+    </header>
+
+    <div class="admin-content">
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👁️</div>
+                <div class="stat-value" id="statVisitors">0</div>
+                <div class="stat-label">الزوار</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-value" id="statProducts">0</div>
+                <div class="stat-label">المنتجات</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🛒</div>
+                <div class="stat-value" id="statOrders">0</div>
+                <div class="stat-label">الطلبات</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-value" id="statPending">0</div>
+                <div class="stat-label">معلقة</div>
+            </div>
+        </div>
+
+        <!-- Orders Section -->
+        <div class="section-card">
+            <div class="section-title">🛒 الطلبات</div>
+
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterOrders('all', this)">الكل</button>
+                <button class="filter-tab" onclick="filterOrders('pending', this)">معلقة</button>
+                <button class="filter-tab" onclick="filterOrders('delivered', this)">موصولة</button>
+                <button class="filter-tab" onclick="filterOrders('cancelled', this)">ملغية</button>
+            </div>
+
+            <div id="ordersList">
+                <div class="empty-state">جاري تحميل الطلبات...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc,
+            deleteDoc,
+            onSnapshot,
+            query,
+            orderBy,
+            getDoc
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
+            authDomain: "hussain-1290b.firebaseapp.com",
+            projectId: "hussain-1290b",
+            storageBucket: "hussain-1290b.firebasestorage.app",
+            messagingSenderId: "798281706738",
+            appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let orders = [];
+        let currentFilter = 'all';
+
+        // Check auth
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin.html';
+        }
+
+        // Load stats
+        onSnapshot(doc(db, "stats", "visitors"), (doc) => {
+            if (doc.exists()) {
+                document.getElementById('statVisitors').innerText = doc.data().count || 0;
+            }
+        });
+
+        onSnapshot(collection(db, "products"), (snapshot) => {
+            let count = 0;
+            snapshot.forEach((doc) => { if (doc.id !== "init") count++; });
+            document.getElementById('statProducts').innerText = count;
+        });
+
+        // Load orders
+        const ordersQuery = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+        onSnapshot(ordersQuery, (snapshot) => {
+            orders = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") orders.push({ id: doc.id, ...doc.data() });
+            });
+
+            document.getElementById('statOrders').innerText = orders.length;
+            document.getElementById('statPending').innerText = orders.filter(o => o.status === 'pending').length;
+
+            renderOrders();
+        });
+
+        window.filterOrders = function(status, btn) {
+            currentFilter = status;
+            document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderOrders();
+        };
+
+        function renderOrders() {
+            const container = document.getElementById('ordersList');
+
+            let filtered = orders;
+            if (currentFilter !== 'all') {
+                filtered = orders.filter(o => o.status === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state">لا توجد طلبات</div>';
+                return;
+            }
+
+            container.innerHTML = filtered.map(order => {
+                const date = new Date(order.createdAt).toLocaleString('ar-IQ');
+                const statusClass = order.status === 'pending' ? 'status-pending' : 
+                                   order.status === 'delivered' ? 'status-delivered' : 'status-cancelled';
+                const statusText = order.status === 'pending' ? 'معلقة' : 
+                                  order.status === 'delivered' ? 'موصولة' : 'ملغية';
+
+                return `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">طلب #${order.id.slice(-6)}</div>
+                                <div class="order-date">${date}</div>
+                            </div>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+
+                        <div class="order-info">
+                            <div class="info-row">
+                                <span class="info-icon">👤</span>
+                                <span>${order.customerName}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-icon">📞</span>
+                                <span>${order.customerPhone}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-icon">📍</span>
+                                <span>${order.province} - ${order.customerAddress}</span>
+                            </div>
+                        </div>
+
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="item-row">
+                                    <span>${item.name}</span>
+                                    <span>العدد: ${item.qty}</span>
+                                </div>
+                            `).join('')}
+                            <div class="order-total">
+                                <span>الإجمالي:</span>
+                                <span>${order.totalAmount?.toLocaleString() || 0} د.ع</span>
+                            </div>
+                        </div>
+
+                        ${order.status === 'pending' ? `
+                            <div class="order-actions">
+                                <button class="btn-success" onclick="updateStatus('${order.id}', 'delivered')">✅ تم التوصيل</button>
+                                <button class="btn-danger" onclick="updateStatus('${order.id}', 'cancelled')">❌ إلغاء</button>
+                            </div>
+                        ` : `
+                            <button class="btn-delete" onclick="deleteOrder('${order.id}')">🗑️ حذف نهائي</button>
+                        `}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.updateStatus = async function(id, status) {
+            try {
+                await setDoc(doc(db, "orders", id), { 
+                    status, 
+                    updatedAt: new Date().toISOString() 
+                }, { merge: true });
+                showToast(status === 'delivered' ? "✅ تم تحديث الحالة" : "❌ تم إلغاء الطلب");
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        window.deleteOrder = async function(id) {
+            if (!confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟")) return;
+
+            try {
+                await deleteDoc(doc(db, "orders", id));
+                showToast("🗑️ تم حذف الطلب");
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

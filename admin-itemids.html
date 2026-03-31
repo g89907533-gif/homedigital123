@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>معرفات السلع - لوحة الإدارة</title>
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display-all" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ios-bg-primary: #0A2F2F;
+            --glass-bg: rgba(12, 45, 45, 0.65);
+            --glass-border: 0.5px solid rgba(247, 249, 249, 0.15);
+            --glass-blur: blur(40px) saturate(210%) brightness(1.1);
+            --ios-orange: #FF9F1C;
+            --ios-green: #2EC4B6;
+            --ios-red: #E71D36;
+            --ios-purple: #5A9A9A;
+            --ios-label-primary: #F7F9F9;
+            --ios-label-secondary: rgba(247, 249, 249, 0.8);
+            --ios-spring: cubic-bezier(0.25, 1, 0.2, 1);
+            --radius-xl: 28px;
+            --sat: env(safe-area-inset-top);
+            --sab: env(safe-area-inset-bottom);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', 'Cairo', -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--ios-bg-primary);
+            color: var(--ios-label-primary);
+            direction: rtl;
+            min-height: 100vh;
+            padding-top: var(--sat);
+            padding-bottom: var(--sab);
+        }
+
+        .admin-header {
+            background: rgba(10, 47, 47, 0.95);
+            backdrop-filter: blur(60px);
+            border-bottom: var(--glass-border);
+            padding: 16px 24px;
+            padding-top: calc(16px + var(--sat));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-header h1 {
+            font-size: 20px;
+            color: #FF2D55;
+        }
+
+        .back-btn {
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--ios-label-primary);
+            border: var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .admin-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* قسم النطاقات الجديد */
+        .ranges-section {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .ranges-title {
+            color: var(--ios-orange);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ranges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .range-badge {
+            background: rgba(90, 154, 154, 0.2);
+            border: 1px solid rgba(90, 154, 154, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 13px;
+        }
+
+        .range-badge .cat {
+            color: var(--ios-orange);
+            font-weight: 700;
+        }
+
+        .range-badge .subcat {
+            color: var(--ios-green);
+        }
+
+        .range-badge .numbers {
+            font-size: 15px;
+            font-weight: 800;
+            color: white;
+            margin-top: 4px;
+        }
+
+        .section-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            color: var(--ios-orange);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box {
+            background: rgba(255, 45, 85, 0.1);
+            border: 1px solid rgba(255, 45, 85, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--ios-label-secondary);
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .ios-input {
+            width: 100%;
+            background: rgba(247, 249, 249, 0.1);
+            border: var(--glass-border);
+            border-radius: 14px;
+            padding: 16px;
+            color: var(--ios-label-primary);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .ios-input:focus {
+            border-color: var(--ios-orange);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-mini {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-mini-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--ios-orange);
+        }
+
+        .stat-mini-label {
+            font-size: 13px;
+            color: var(--ios-label-secondary);
+            margin-top: 4px;
+        }
+
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .products-table th {
+            text-align: right;
+            padding: 12px;
+            color: var(--ios-label-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(247, 249, 249, 0.1);
+        }
+
+        .products-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid rgba(247, 249, 249, 0.05);
+        }
+
+        .product-row {
+            transition: all 0.3s;
+        }
+
+        .product-row:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .product-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid rgba(255, 159, 28, 0.3);
+        }
+
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .product-cat {
+            font-size: 12px;
+            color: var(--ios-label-secondary);
+        }
+
+        .item-id-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(46, 196, 182, 0.2);
+            color: var(--ios-green);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .item-id-missing {
+            background: rgba(255, 159, 28, 0.2);
+            color: var(--ios-orange);
+        }
+
+        .btn-edit-id {
+            background: rgba(247, 249, 249, 0.1);
+            border: var(--glass-border);
+            color: var(--ios-label-primary);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-edit-id:hover {
+            background: rgba(255, 159, 28, 0.2);
+            color: var(--ios-orange);
+        }
+
+        .edit-id-input {
+            width: 100px;
+            background: rgba(247, 249, 249, 0.1);
+            border: 1px solid var(--ios-orange);
+            border-radius: 8px;
+            padding: 8px;
+            color: var(--ios-label-primary);
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .btn-save-id {
+            background: var(--ios-green);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-right: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--ios-label-secondary);
+        }
+
+        .toast {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 60, 60, 0.95);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <a href="admin.html" class="back-btn">← رجوع</a>
+        <h1>🏷️ معرفات السلع</h1>
+        <div style="width: 60px;"></div>
+    </header>
+
+    <div class="admin-content">
+        <!-- قسم عرض النطاقات المتاحة -->
+        <div class="ranges-section">
+            <div class="ranges-title">
+                <i class="fas fa-chart-line"></i>
+                نطاقات المعرفات المحجوزة للأقسام الفرعية
+            </div>
+            <div id="rangesContainer" class="ranges-grid">
+                <div class="empty-state">جاري تحميل النطاقات...</div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">📋 إدارة معرفات المنتجات</div>
+
+            <div class="info-box">
+                💡 تلميح: معرف السلعة يجب أن يكون 4 أرقام (مثال: 1234). إذا كان المنتج تابعاً لقسم فرعي له نطاق محدد، يجب أن يكون المعرف ضمن ذلك النطاق.
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-mini">
+                    <div class="stat-mini-value" id="totalProducts">0</div>
+                    <div class="stat-mini-label">إجمالي المنتجات</div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-mini-value" id="withId">0</div>
+                    <div class="stat-mini-label">بها معرف</div>
+                </div>
+                <div class="stat-mini">
+                    <div class="stat-mini-value" id="withoutId">0</div>
+                    <div class="stat-mini-label">بدون معرف</div>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="searchInput" class="ios-input" placeholder="🔍 البحث بالمعرف أو اسم المنتج..." oninput="searchProducts(this.value)">
+            </div>
+
+            <div id="productsContainer">
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>الصورة</th>
+                            <th>المنتج</th>
+                            <th>المعرف</th>
+                            <th>تعديل</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <tr><td colspan="4" class="empty-state">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc,
+            onSnapshot,
+            query,
+            orderBy,
+            getDocs  // لإضافة التحقق من التكرار
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
+            authDomain: "hussain-1290b.firebaseapp.com",
+            projectId: "hussain-1290b",
+            storageBucket: "hussain-1290b.firebasestorage.app",
+            messagingSenderId: "798281706738",
+            appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let products = [];
+        let editingId = null;
+        let itemIdRanges = []; // تخزين النطاقات
+
+        // Check auth
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin.html';
+        }
+
+        // Load products
+        const productsQuery = query(collection(db, "products"), orderBy("createdAt", "desc"));
+        onSnapshot(productsQuery, (snapshot) => {
+            products = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") {
+                    products.push({ id: doc.id, ...doc.data() });
+                }
+            });
+            updateStats();
+            renderProducts();
+        });
+
+        // Load itemIdRanges
+        onSnapshot(collection(db, "itemIdRanges"), (snapshot) => {
+            itemIdRanges = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") {
+                    itemIdRanges.push({ id: doc.id, ...doc.data() });
+                }
+            });
+            renderRanges();
+        });
+
+        function renderRanges() {
+            const container = document.getElementById('rangesContainer');
+            if (!container) return;
+
+            if (itemIdRanges.length === 0) {
+                container.innerHTML = '<div class="empty-state">لا توجد نطاقات محددة بعد</div>';
+                return;
+            }
+
+            container.innerHTML = itemIdRanges.map(range => `
+                <div class="range-badge">
+                    <div><span class="cat">${range.parentCategory}</span> ← <span class="subcat">${range.subCategory}</span></div>
+                    <div class="numbers">${range.startRange} - ${range.endRange}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const total = products.length;
+            const withId = products.filter(p => p.itemId && p.itemId.toString().length === 4).length;
+            const withoutId = total - withId;
+
+            document.getElementById('totalProducts').innerText = total;
+            document.getElementById('withId').innerText = withId;
+            document.getElementById('withoutId').innerText = withoutId;
+        }
+
+        function renderProducts(filterText = '') {
+            const tbody = document.getElementById('productsTableBody');
+
+            let filtered = products;
+            if (filterText) {
+                const lower = filterText.toLowerCase();
+                filtered = products.filter(p => 
+                    (p.itemId && p.itemId.toString().includes(lower)) ||
+                    p.name.toLowerCase().includes(lower)
+                );
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">لا توجد منتجات</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(p => {
+                const hasId = p.itemId && p.itemId.toString().length === 4;
+                const idDisplay = hasId ? 
+                    `<span class="item-id-display">#${p.itemId}</span>` : 
+                    `<span class="item-id-display item-id-missing">غير محدد</span>`;
+
+                const isEditing = editingId === p.id;
+
+                return `
+                    <tr class="product-row" data-id="${p.id}" data-name="${p.name.toLowerCase()}" data-itemid="${p.itemId || ''}">
+                        <td>
+                            ${p.images?.[0] ? 
+                                `<img src="${p.images[0]}" class="product-img" onerror="this.style.display='none'">` : 
+                                '<div style="width: 50px; height: 50px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center;">📦</div>'
+                            }
+                        </td>
+                        <td>
+                            <div class="product-name">${p.name}</div>
+                            <div class="product-cat">${p.cat}${p.subCat ? ' > ' + p.subCat : ''}</div>
+                        </td>
+                        <td>
+                            ${isEditing ? 
+                                `<input type="text" class="edit-id-input" id="editInput_${p.id}" value="${p.itemId || ''}" maxlength="4" placeholder="4 أرقام">` : 
+                                idDisplay
+                            }
+                        </td>
+                        <td>
+                            ${isEditing ? 
+                                `<button class="btn-save-id" onclick="saveItemId('${p.id}')">💾 حفظ</button>` : 
+                                `<button class="btn-edit-id" onclick="startEdit('${p.id}')">✏️ تعديل</button>`
+                            }
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.searchProducts = function(text) {
+            renderProducts(text);
+        };
+
+        window.startEdit = function(id) {
+            editingId = id;
+            renderProducts(document.getElementById('searchInput').value);
+            setTimeout(() => {
+                const input = document.getElementById(`editInput_${id}`);
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            }, 50);
+        };
+
+        window.saveItemId = async function(id) {
+            const input = document.getElementById(`editInput_${id}`);
+            const value = input.value.trim();
+            const product = products.find(p => p.id === id);
+
+            if (!product) return;
+
+            // التحقق من الصيغة
+            if (value && !/^[0-9]{4}$/.test(value)) {
+                showToast("❌ يجب أن يكون 4 أرقام بالضبط");
+                return;
+            }
+
+            // التحقق من عدم التكرار
+            if (value) {
+                const productsSnapshot = await getDocs(collection(db, "products"));
+                let duplicate = false;
+                productsSnapshot.forEach((doc) => {
+                    if (doc.data().itemId === value && doc.id !== id) {
+                        duplicate = true;
+                    }
+                });
+                if (duplicate) {
+                    showToast("❌ هذا المعرف مستخدم بالفعل لمنتج آخر");
+                    return;
+                }
+
+                // التحقق من النطاق إذا كان المنتج له قسم فرعي
+                if (product.subCat) {
+                    const range = itemIdRanges.find(r => r.subCategory === product.subCat && r.parentCategory === product.cat);
+                    if (range) {
+                        const itemIdNum = parseInt(value);
+                        if (itemIdNum < range.startRange || itemIdNum > range.endRange) {
+                            showToast(`❌ المعرف يجب أن يكون ضمن النطاق ${range.startRange} - ${range.endRange} لهذا القسم`);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            try {
+                await setDoc(doc(db, "products", id), { 
+                    itemId: value || null,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+
+                editingId = null;
+                showToast(value ? "✅ تم حفظ المعرف" : "✅ تم إزالة المعرف");
+                renderProducts(document.getElementById('searchInput').value);
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

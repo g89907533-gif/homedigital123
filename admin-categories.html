@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>الأقسام - لوحة الإدارة</title>
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display-all" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ios-bg-primary: #0A2F2F;
+            --glass-bg: rgba(12, 45, 45, 0.65);
+            --glass-border: 0.5px solid rgba(247, 249, 249, 0.15);
+            --glass-blur: blur(40px) saturate(210%) brightness(1.1);
+            --ios-orange: #FF9F1C;
+            --ios-green: #2EC4B6;
+            --ios-red: #E71D36;
+            --ios-purple: #5A9A9A;
+            --ios-label-primary: #F7F9F9;
+            --ios-label-secondary: rgba(247, 249, 249, 0.8);
+            --ios-spring: cubic-bezier(0.25, 1, 0.2, 1);
+            --radius-xl: 28px;
+            --sat: env(safe-area-inset-top);
+            --sab: env(safe-area-inset-bottom);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', 'Cairo', -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--ios-bg-primary);
+            color: var(--ios-label-primary);
+            direction: rtl;
+            min-height: 100vh;
+            padding-top: var(--sat);
+            padding-bottom: var(--sab);
+        }
+
+        .admin-header {
+            background: rgba(10, 47, 47, 0.95);
+            backdrop-filter: blur(60px);
+            border-bottom: var(--glass-border);
+            padding: 16px 24px;
+            padding-top: calc(16px + var(--sat));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-header h1 {
+            font-size: 20px;
+            color: var(--ios-purple);
+        }
+
+        .back-btn {
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--ios-label-primary);
+            border: var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .admin-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .section-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            color: var(--ios-orange);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .ios-input, .ios-select {
+            width: 100%;
+            background: rgba(247, 249, 249, 0.1);
+            border: var(--glass-border);
+            border-radius: 14px;
+            padding: 16px;
+            color: var(--ios-label-primary);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .ios-input:focus, .ios-select:focus {
+            border-color: var(--ios-orange);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--ios-orange) 0%, #E88D0C 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 159, 28, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--ios-purple);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-secondary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-edit {
+            background: rgba(255, 159, 28, 0.2);
+            color: var(--ios-orange);
+            border: 1px solid rgba(255, 159, 28, 0.3);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            margin-left: 8px;
+        }
+
+        .btn-edit:hover {
+            background: rgba(255, 159, 28, 0.4);
+        }
+
+        .btn-save {
+            background: var(--ios-green);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+
+        .btn-cancel {
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--ios-label-secondary);
+            border: var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .category-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .category-item:hover {
+            background: rgba(0, 0, 0, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .category-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .category-meta {
+            font-size: 12px;
+            color: var(--ios-label-secondary);
+            margin-top: 4px;
+        }
+
+        .btn-delete {
+            background: rgba(231, 29, 54, 0.2);
+            color: var(--ios-red);
+            border: 1px solid rgba(231, 29, 54, 0.3);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: rgba(231, 29, 54, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--ios-label-secondary);
+        }
+
+        .divider {
+            height: 2px;
+            background: rgba(247, 249, 249, 0.1);
+            margin: 32px 0;
+        }
+
+        /* تنسيق الأقسام الثانوية */
+        .subcategories-container {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(247, 249, 249, 0.1);
+        }
+
+        .subcategories-title {
+            font-size: 13px;
+            color: var(--ios-label-secondary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .subcategories-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .subcategory-tag {
+            background: rgba(90, 154, 154, 0.2);
+            color: var(--ios-purple);
+            padding: 6px 12px;
+            border-radius:             20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .subcategory-tag .btn-edit-small {
+            background: none;
+            border: none;
+            color: var(--ios-purple);
+            cursor: pointer;
+            font-size: 11px;
+            padding: 2px 4px;
+        }
+
+        .edit-input {
+            background: rgba(247, 249, 249, 0.15);
+            border: 1px solid var(--ios-orange);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--ios-label-primary);
+            font-size: 14px;
+            width: 200px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 60, 60, 0.95);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <a href="admin.html" class="back-btn">← رجوع</a>
+        <h1>📁 الأقسام</h1>
+        <div style="width: 60px;"></div>
+    </header>
+
+    <div class="admin-content">
+        <!-- Main Categories -->
+        <div class="section-card">
+            <div class="section-title">📂 الأقسام الرئيسية</div>
+
+            <div class="form-row">
+                <input type="text" id="newCategoryName" class="ios-input" placeholder="اسم القسم الجديد">
+                <button class="btn-primary" onclick="addCategory()">➕ إضافة</button>
+            </div>
+
+            <div id="categoriesList" class="category-list">
+                <div class="empty-state">جاري التحميل...</div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Sub Categories -->
+        <div class="section-card">
+            <div class="section-title">📁 الأقسام الفرعية</div>
+
+            <select id="parentCategory" class="ios-select" style="margin-bottom: 16px;">
+                <option value="">اختر القسم الرئيسي</option>
+            </select>
+
+            <div class="form-row">
+                <input type="text" id="newSubcategoryName" class="ios-input" placeholder="اسم القسم الفرعي">
+                <button class="btn-secondary" onclick="addSubcategory()">➕ إضافة</button>
+            </div>
+
+            <div id="subcategoriesList" class="category-list" style="margin-top: 20px;">
+                <div class="empty-state">اختر قسم رئيسي لعرض الأقسام الفرعية</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            deleteDoc,
+            onSnapshot
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
+            authDomain: "hussain-1290b.firebaseapp.com",
+            projectId: "hussain-1290b",
+            storageBucket: "hussain-1290b.firebasestorage.app",
+            messagingSenderId: "798281706738",
+            appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let categories = [];
+        let subcategories = [];
+        let editingCategoryId = null;
+        let editingSubcategoryId = null;
+
+        // Check auth
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin.html';
+        }
+
+        // Load categories
+        onSnapshot(collection(db, "categories"), (snapshot) => {
+            categories = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") categories.push({ id: doc.id, ...doc.data() });
+            });
+            renderCategories();
+            updateParentSelect();
+        });
+
+        // Load subcategories
+        onSnapshot(collection(db, "subcategories"), (snapshot) => {
+            subcategories = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") subcategories.push({ id: doc.id, ...doc.data() });
+            });
+            renderCategories();
+            renderSubcategories();
+        });
+
+        function renderCategories() {
+            const list = document.getElementById('categoriesList');
+            if (categories.length === 0) {
+                list.innerHTML = '<div class="empty-state">لا توجد أقسام</div>';
+                return;
+            }
+            
+            list.innerHTML = categories.map(cat => {
+                // البحث عن الأقسام الفرعية التابعة لهذا القسم
+                const catSubcategories = subcategories.filter(s => s.parentCategory === cat.name);
+                
+                const isEditing = editingCategoryId === cat.id;
+                
+                let subcategoriesHtml = '';
+                if (catSubcategories.length > 0) {
+                    subcategoriesHtml = `
+                        <div class="subcategories-container">
+                            <div class="subcategories-title">
+                                📁 الأقسام الفرعية (${catSubcategories.length})
+                            </div>
+                            <div class="subcategories-list">
+                                ${catSubcategories.map(sub => `
+                                    <div class="subcategory-tag">
+                                        ${sub.name}
+                                        <button class="btn-edit-small" onclick="startEditSubcategory('${sub.id}', '${sub.name}', event)" title="تعديل">✏️</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="category-item">
+                        <div style="flex: 1;">
+                            ${isEditing ? 
+                                `<input type="text" class="edit-input" id="editCat_${cat.id}" value="${cat.name}" onkeypress="if(event.key==='Enter') saveCategoryEdit('${cat.id}')">` : 
+                                `<div class="category-name">${cat.name}</div>`
+                            }
+                            ${subcategoriesHtml}
+                        </div>
+                        <div>
+                            ${isEditing ? 
+                                `<button class="btn-save" onclick="saveCategoryEdit('${cat.id}')">💾 حفظ</button>
+                                 <button class="btn-cancel" onclick="cancelEdit()">إلغاء</button>` : 
+                                `<button class="btn-edit" onclick="startEditCategory('${cat.id}')">✏️ تعديل</button>
+                                 <button class="btn-delete" onclick="deleteCategory('${cat.id}', '${cat.name}')">🗑️ حذف</button>`
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateParentSelect() {
+            const select = document.getElementById('parentCategory');
+            select.innerHTML = '<option value="">اختر القسم الرئيسي</option>' +
+                categories.map(cat => `<option value="${cat.name}">${cat.name}</option>`).join('');
+        }
+
+        function renderSubcategories() {
+            const parentCat = document.getElementById('parentCategory').value;
+            const list = document.getElementById('subcategoriesList');
+
+            if (!parentCat) {
+                list.innerHTML = '<div class="empty-state">اختر قسم رئيسي لعرض الأقسام الفرعية</div>';
+                return;
+            }
+
+            const filtered = subcategories.filter(s => s.parentCategory === parentCat);
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty-state">لا توجد أقسام فرعية</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(sub => {
+                const isEditing = editingSubcategoryId === sub.id;
+                
+                return `
+                    <div class="category-item">
+                        <div>
+                            ${isEditing ? 
+                                `<input type="text" class="edit-input" id="editSub_${sub.id}" value="${sub.name}" onkeypress="if(event.key==='Enter') saveSubcategoryEdit('${sub.id}')">` : 
+                                `<div class="category-name">${sub.name}</div>`
+                            }
+                            <div class="category-meta">تنتمي إلى: ${sub.parentCategory}</div>
+                        </div>
+                        <div>
+                            ${isEditing ? 
+                                `<button class="btn-save" onclick="saveSubcategoryEdit('${sub.id}')">💾 حفظ</button>
+                                 <button class="btn-cancel" onclick="cancelEdit()">إلغاء</button>` : 
+                                `<button class="btn-edit" onclick="startEditSubcategory('${sub.id}', '${sub.name}')">✏️ تعديل</button>
+                                 <button class="btn-delete" onclick="deleteSubcategory('${sub.id}')">🗑️ حذف</button>`
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ====== تعديل الأقسام الرئيسية ======
+        window.startEditCategory = function(id) {
+            editingCategoryId = id;
+            editingSubcategoryId = null;
+            renderCategories();
+            renderSubcategories();
+            setTimeout(() => {
+                const input = document.getElementById(`editCat_${id}`);
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            }, 50);
+        };
+
+        window.saveCategoryEdit = async function(id) {
+            const input = document.getElementById(`editCat_${id}`);
+            const newName = input.value.trim();
+            
+            if (!newName) {
+                showToast("❌ الاسم لا يمكن أن يكون فارغاً");
+                return;
+            }
+
+            const oldCategory = categories.find(c => c.id === id);
+            if (!oldCategory) return;
+
+            try {
+                // تحديث القسم الرئيسي
+                await setDoc(doc(db, "categories", id), { 
+                    name: newName, 
+                    createdAt: oldCategory.createdAt || new Date().toISOString()
+                });
+
+                // تحديث الأقسام الفرعية التابعة له
+                const relatedSubcats = subcategories.filter(s => s.parentCategory === oldCategory.name);
+                for (const sub of relatedSubcats) {
+                    await setDoc(doc(db, "subcategories", sub.id), { 
+                        name: sub.name, 
+                        parentCategory: newName,
+                        createdAt: sub.createdAt || new Date().toISOString()
+                    });
+                }
+
+                editingCategoryId = null;
+                showToast("✅ تم تحديث القسم بنجاح");
+                renderCategories();
+                renderSubcategories();
+                updateParentSelect();
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        // ====== تعديل الأقسام الفرعية ======
+        window.startEditSubcategory = function(id, name, event) {
+            if (event) event.stopPropagation();
+            editingSubcategoryId = id;
+            editingCategoryId = null;
+            renderCategories();
+            renderSubcategories();
+            setTimeout(() => {
+                const input = document.getElementById(`editSub_${id}`);
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            }, 50);
+        };
+
+        window.saveSubcategoryEdit = async function(id) {
+            const input = document.getElementById(`editSub_${id}`);
+            const newName = input.value.trim();
+            
+            if (!newName) {
+                showToast("❌ الاسم لا يمكن أن يكون فارغاً");
+                return;
+            }
+
+            const sub = subcategories.find(s => s.id === id);
+            if (!sub) return;
+
+            try {
+                await setDoc(doc(db, "subcategories", id), { 
+                    name: newName, 
+                    parentCategory: sub.parentCategory,
+                    createdAt: sub.createdAt || new Date().toISOString()
+                });
+
+                editingSubcategoryId = null;
+                showToast("✅ تم تحديث القسم الفرعي بنجاح");
+                renderCategories();
+                renderSubcategories();
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        window.cancelEdit = function() {
+            editingCategoryId = null;
+            editingSubcategoryId = null;
+            renderCategories();
+            renderSubcategories();
+        };
+
+        // ====== الإضافة والحذف ======
+        window.addCategory = async function() {
+            const name = document.getElementById('newCategoryName').value.trim();
+            if (!name) {
+                showToast("يرجى إدخال اسم القسم");
+                return;
+            }
+
+            try {
+                await setDoc(doc(collection(db, "categories"), name), { 
+                    name, 
+                    createdAt: new Date().toISOString() 
+                });
+                document.getElementById('newCategoryName').value = '';
+                showToast("✅ تم إضافة القسم");
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        window.addSubcategory = async function() {
+            const parent = document.getElementById('parentCategory').value;
+            const name = document.getElementById('newSubcategoryName').value.trim();
+
+            if (!parent || !name) {
+                showToast("يرجى اختيار القسم الرئيسي وإدخال الاسم");
+                return;
+            }
+
+            try {
+                await setDoc(doc(collection(db, "subcategories"), parent + '_' + name), { 
+                    name, 
+                    parentCategory: parent,
+                    createdAt: new Date().toISOString() 
+                });
+                document.getElementById('newSubcategoryName').value = '';
+                showToast("✅ تم إضافة القسم الفرعي");
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        window.deleteCategory = async function(id, name) {
+            if (!confirm(`حذف القسم "${name}"؟\n\n⚠️ سيتم حذف جميع الأقسام الفرعية التابعة له أيضاً!`)) return;
+
+            try {
+                // حذف القسم الرئيسي
+                await deleteDoc(doc(db, "categories", id));
+                
+                // حذف الأقسام الفرعية التابعة له
+                const relatedSubcats = subcategories.filter(s => s.parentCategory === name);
+                for (const sub of relatedSubcats) {
+                    await deleteDoc(doc(db, "subcategories", sub.id));
+                }
+                
+                showToast("🗑️ تم حذف القسم والأقسام الفرعية");
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        window.deleteSubcategory = async function(id) {
+            if (!confirm("حذف هذا القسم الفرعي؟")) return;
+
+            try {
+                await deleteDoc(doc(db, "subcategories", id));
+                showToast("🗑️ تم الحذف");
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        document.getElementById('parentCategory').addEventListener('change', renderSubcategories);
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

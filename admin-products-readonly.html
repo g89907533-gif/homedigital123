@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>عرض المنتجات (بدون أسعار) - لوحة الإدارة</title>
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display-all" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ios-bg-primary: #0A2F2F;
+            --glass-bg: rgba(12, 45, 45, 0.65);
+            --glass-border: 0.5px solid rgba(247, 249, 249, 0.15);
+            --glass-blur: blur(40px) saturate(210%) brightness(1.1);
+            --ios-orange: #FF9F1C;
+            --ios-green: #2EC4B6;
+            --ios-red: #E71D36;
+            --ios-purple: #5A9A9A;
+            --ios-label-primary: #F7F9F9;
+            --ios-label-secondary: rgba(247, 249, 249, 0.8);
+            --ios-spring: cubic-bezier(0.25, 1, 0.2, 1);
+            --radius-xl: 28px;
+            --sat: env(safe-area-inset-top);
+            --sab: env(safe-area-inset-bottom);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', 'Cairo', -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--ios-bg-primary);
+            color: var(--ios-label-primary);
+            direction: rtl;
+            min-height: 100vh;
+            padding-top: var(--sat);
+            padding-bottom: var(--sab);
+        }
+
+        .admin-header {
+            background: rgba(10, 47, 47, 0.95);
+            backdrop-filter: blur(60px);
+            border-bottom: var(--glass-border);
+            padding: 16px 24px;
+            padding-top: calc(16px + var(--sat));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-header h1 {
+            font-size: 20px;
+            color: var(--ios-purple);
+        }
+
+        .back-btn {
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--ios-label-primary);
+            border: var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .refresh-btn {
+            background: rgba(46, 196, 182, 0.2);
+            color: var(--ios-green);
+            border: 1px solid rgba(46, 196, 182, 0.3);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(46, 196, 182, 0.4);
+        }
+
+        .admin-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .filter-section {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .filter-title {
+            color: var(--ios-orange);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .ios-input {
+            width: 100%;
+            background: rgba(247, 249, 249, 0.1);
+            border: var(--glass-border);
+            border-radius: 14px;
+            padding: 16px;
+            color: var(--ios-label-primary);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .ios-input:focus {
+            border-color: var(--ios-orange);
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+
+        .filter-bar::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .filter-chip {
+            background: rgba(247, 249, 249, 0.1);
+            border: var(--glass-border);
+            color: var(--ios-label-secondary);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .filter-chip.active {
+            background: linear-gradient(135deg, var(--ios-orange) 0%, #E88D0C 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .subcategory-bar {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 8px;
+        }
+
+        .subcategory-chip {
+            background: rgba(90, 154, 154, 0.2);
+            border: 1px solid rgba(90, 154, 154, 0.3);
+            color: var(--ios-purple);
+            padding: 8px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .subcategory-chip.active {
+            background: linear-gradient(135deg, var(--ios-purple) 0%, #4A8A8A 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .product-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.3s var(--ios-spring);
+            animation: fadeIn 0.4s ease backwards;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--ios-orange);
+        }
+
+        .images-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .image-item {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #1A3F3F;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .image-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 18px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--ios-label-primary);
+        }
+
+        .product-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-cat {
+            background: rgba(255, 159, 28, 0.2);
+            color: var(--ios-orange);
+        }
+
+        .badge-subcat {
+            background: rgba(90, 154, 154, 0.2);
+            color: var(--ios-purple);
+        }
+
+        .badge-itemid {
+            background: rgba(46, 196, 182, 0.2);
+            color: var(--ios-green);
+        }
+
+        .product-description {
+            margin: 12px 0;
+            font-size: 14px;
+            color: var(--ios-label-secondary);
+            line-height: 1.5;
+        }
+
+        .description-text {
+            max-height: 4.5em;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .description-text.expanded {
+            max-height: none;
+        }
+
+        .show-more-btn {
+            background: none;
+            border: none;
+            color: var(--ios-orange);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+            padding: 0;
+        }
+
+        .colors-section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .colors-label {
+            font-size: 12px;
+            color: var(--ios-label-secondary);
+            margin-bottom: 8px;
+        }
+
+        .colors-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .color-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .color-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--ios-label-secondary);
+            grid-column: 1 / -1;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .toast {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 60, 60, 0.95);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show { opacity: 1; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            .images-gallery {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <a href="admin.html" class="back-btn">← رجوع</a>
+        <h1>👁️ عرض المنتجات (بدون أسعار)</h1>
+        <button class="refresh-btn" onclick="refreshData()">🔄 تحديث</button>
+    </header>
+
+    <div class="admin-content">
+        <div class="filter-section">
+            <div class="filter-title">
+                <i class="fas fa-search"></i>
+                البحث والتصفية
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="searchInput" class="ios-input" placeholder="🔍 ابحث بالاسم أو المعرف..." oninput="handleSearch(this.value)">
+            </div>
+
+            <div class="filter-bar" id="categoryFilter">
+                <div class="filter-chip active" data-cat="all" onclick="selectCategory('all', this)">الكل</div>
+            </div>
+
+            <div id="subcategoryContainer" style="display: none;">
+                <div class="subcategory-bar" id="subcategoryFilter"></div>
+            </div>
+        </div>
+
+        <div id="productsGrid" class="products-grid">
+            <div class="empty-state">
+                <div class="empty-state-icon">⏳</div>
+                <h3>جاري تحميل المنتجات...</h3>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            onSnapshot,
+            query,
+            orderBy
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
+            authDomain: "hussain-1290b.firebaseapp.com",
+            projectId: "hussain-1290b",
+            storageBucket: "hussain-1290b.firebasestorage.app",
+            messagingSenderId: "798281706738",
+            appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let products = [];
+        let categories = [];
+        let subcategories = [];
+
+        let currentCategory = 'all';
+        let currentSubcategory = 'all';
+        let currentSearch = '';
+
+        // Check auth
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin.html';
+        }
+
+        // Load products
+        const productsQuery = query(collection(db, "products"), orderBy("createdAt", "desc"));
+        onSnapshot(productsQuery, (snapshot) => {
+            products = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") {
+                    products.push({ id: doc.id, ...doc.data() });
+                }
+            });
+            renderProducts();
+        });
+
+        // Load categories
+        onSnapshot(collection(db, "categories"), (snapshot) => {
+            categories = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") {
+                    categories.push(doc.data().name);
+                }
+            });
+            renderCategoryFilter();
+        });
+
+        // Load subcategories
+        onSnapshot(collection(db, "subcategories"), (snapshot) => {
+            subcategories = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") {
+                    subcategories.push({ id: doc.id, ...doc.data() });
+                }
+            });
+            renderSubcategoryFilter();
+        });
+
+        function renderCategoryFilter() {
+            const container = document.getElementById('categoryFilter');
+            const allCats = ['all', ...categories];
+            container.innerHTML = allCats.map(cat => `
+                <div class="filter-chip ${cat === currentCategory ? 'active' : ''}" data-cat="${cat}" onclick="selectCategory('${cat}', this)">
+                    ${cat === 'all' ? 'الكل' : cat}
+                </div>
+            `).join('');
+        }
+
+        function renderSubcategoryFilter() {
+            const container = document.getElementById('subcategoryFilter');
+            const subcategoryContainer = document.getElementById('subcategoryContainer');
+            
+            if (currentCategory === 'all') {
+                subcategoryContainer.style.display = 'none';
+                return;
+            }
+
+            const relatedSubcats = subcategories.filter(s => s.parentCategory === currentCategory);
+            if (relatedSubcats.length === 0) {
+                subcategoryContainer.style.display = 'none';
+                return;
+            }
+
+            subcategoryContainer.style.display = 'block';
+            container.innerHTML = `
+                <div class="subcategory-chip ${currentSubcategory === 'all' ? 'active' : ''}" data-sub="all" onclick="selectSubcategory('all', this)">الكل</div>
+                ${relatedSubcats.map(sub => `
+                    <div class="subcategory-chip ${currentSubcategory === sub.name ? 'active' : ''}" data-sub="${sub.name}" onclick="selectSubcategory('${sub.name}', this)">${sub.name}</div>
+                `).join('')}
+            `;
+        }
+
+        window.selectCategory = function(cat, element) {
+            currentCategory = cat;
+            currentSubcategory = 'all';
+            
+            document.querySelectorAll('.filter-chip').forEach(ch => ch.classList.remove('active'));
+            element.classList.add('active');
+            
+            renderSubcategoryFilter();
+            renderProducts();
+        };
+
+        window.selectSubcategory = function(sub, element) {
+            currentSubcategory = sub;
+            
+            document.querySelectorAll('.subcategory-chip').forEach(ch => ch.classList.remove('active'));
+            element.classList.add('active');
+            
+            renderProducts();
+        };
+
+        window.handleSearch = function(query) {
+            currentSearch = query.trim().toLowerCase();
+            renderProducts();
+        };
+
+        window.refreshData = function() {
+            showToast("🔄 جاري تحديث البيانات...");
+            // Re-trigger rendering (already real-time, but force re-render)
+            renderProducts();
+        };
+
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            
+            let filtered = [...products];
+            
+            // Filter by category
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(p => p.cat === currentCategory);
+            }
+            
+            // Filter by subcategory
+            if (currentSubcategory !== 'all') {
+                filtered = filtered.filter(p => p.subCat === currentSubcategory);
+            }
+            
+            // Filter by search
+            if (currentSearch) {
+                const isNumeric = /^\d+$/.test(currentSearch);
+                if (isNumeric) {
+                    filtered = filtered.filter(p => p.itemId && p.itemId.toString().includes(currentSearch));
+                } else {
+                    filtered = filtered.filter(p => 
+                        p.name.toLowerCase().includes(currentSearch) || 
+                        (p.desc && p.desc.toLowerCase().includes(currentSearch)) ||
+                        (p.itemId && p.itemId.toString().includes(currentSearch))
+                    );
+                }
+            }
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <h3>لا توجد منتجات</h3>
+                        <p>لا توجد منتجات تطابق معايير البحث</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = filtered.map((p, idx) => {
+                const images = p.images || [];
+                const hasImages = images.length > 0;
+                const hasDescription = p.desc && p.desc.trim().length > 0;
+                const descText = hasDescription ? p.desc.trim() : '';
+                const needsToggle = descText.length > 100;
+                
+                let imagesHtml = '';
+                if (hasImages) {
+                    imagesHtml = `
+                        <div class="images-gallery">
+                            ${images.slice(0, 4).map(src => `
+                                <div class="image-item">
+                                    <img src="${src}" alt="${p.name}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%23333%22 width=%22100%22 height=%22100%22/%3E%3Ctext fill=%22%23999%22 x=%2250%22 y=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22%3Eلا صورة%3C/text%3E%3C/svg%3E'">
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    imagesHtml = `
+                        <div class="images-gallery" style="display: flex; align-items: center; justify-content: center; min-height: 150px; color: var(--ios-label-secondary);">
+                            <i class="fas fa-image" style="font-size: 48px; opacity: 0.5;"></i>
+                            <span style="margin-right: 10px;">لا توجد صور</span>
+                        </div>
+                    `;
+                }
+                
+                let colorsHtml = '';
+                if (p.colors && p.colors.length > 0) {
+                    colorsHtml = `
+                        <div class="colors-section">
+                            <div class="colors-label">الألوان المتوفرة:</div>
+                            <div class="colors-list">
+                                ${p.colors.map(c => `
+                                    <div class="color-item">
+                                        <div class="color-dot" style="background-color: ${c.code}; ${c.code === '#FFFFFF' ? 'border: 1px solid rgba(0,0,0,0.2);' : ''}"></div>
+                                        <span>${c.name}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="product-card" style="animation-delay: ${idx * 0.05}s">
+                        ${imagesHtml}
+                        <div class="card-content">
+                            <div class="product-name">${p.name}</div>
+                            <div class="product-badges">
+                                ${p.cat ? `<span class="badge badge-cat">${p.cat}</span>` : ''}
+                                ${p.subCat ? `<span class="badge badge-subcat">${p.subCat}</span>` : ''}
+                                ${p.itemId ? `<span class="badge badge-itemid">معرف: ${p.itemId}</span>` : ''}
+                            </div>
+                            ${hasDescription ? `
+                                <div class="product-description">
+                                    <div id="desc-${p.id}" class="description-text ${needsToggle ? 'collapsed' : ''}">
+                                        ${descText}
+                                    </div>
+                                    ${needsToggle ? `
+                                        <button class="show-more-btn" onclick="toggleDescription('${p.id}')" id="btn-${p.id}">
+                                            عرض المزيد
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+                            ${colorsHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        window.toggleDescription = function(productId) {
+            const desc = document.getElementById(`desc-${productId}`);
+            const btn = document.getElementById(`btn-${productId}`);
+            if (!desc || !btn) return;
+            
+            if (desc.classList.contains('collapsed')) {
+                desc.classList.remove('collapsed');
+                desc.classList.add('expanded');
+                btn.textContent = 'عرض أقل';
+            } else {
+                desc.classList.remove('expanded');
+                desc.classList.add('collapsed');
+                btn.textContent = 'عرض المزيد';
+            }
+        };
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

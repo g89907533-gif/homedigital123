@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>إضافة منتج - لوحة الإدارة</title>
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display-all" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ios-bg-primary: #0A2F2F;
+            --glass-bg: rgba(12, 45, 45, 0.65);
+            --glass-border: 0.5px solid rgba(247, 249, 249, 0.15);
+            --glass-blur: blur(40px) saturate(210%) brightness(1.1);
+            --ios-orange: #FF9F1C;
+            --ios-green: #2EC4B6;
+            --ios-red: #E71D36;
+            --ios-purple: #5A9A9A;
+            --ios-label-primary: #F7F9F9;
+            --ios-label-secondary: rgba(247, 249, 249, 0.8);
+            --ios-spring: cubic-bezier(0.25, 1, 0.2, 1);
+            --radius-xl: 28px;
+            --sat: env(safe-area-inset-top);
+            --sab: env(safe-area-inset-bottom);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', 'Cairo', -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--ios-bg-primary);
+            color: var(--ios-label-primary);
+            direction: rtl;
+            min-height: 100vh;
+            padding-top: var(--sat);
+            padding-bottom: var(--sab);
+        }
+
+        .admin-header {
+            background: rgba(10, 47, 47, 0.95);
+            backdrop-filter: blur(60px);
+            border-bottom: var(--glass-border);
+            padding: 16px 24px;
+            padding-top: calc(16px + var(--sat));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-header h1 {
+            font-size: 20px;
+            color: var(--ios-green);
+        }
+
+        .back-btn {
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--ios-label-primary);
+            border: var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .admin-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .form-section {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+        }
+
+        .form-title {
+            color: var(--ios-green);
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .form-subtitle {
+            color: var(--ios-label-secondary);
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--ios-label-secondary);
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .ios-input, .ios-select, .ios-textarea {
+            width: 100%;
+            background: rgba(247, 249, 249, 0.1);
+            border: var(--glass-border);
+            border-radius: 14px;
+            padding: 18px;
+            color: var(--ios-label-primary);
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .ios-input:focus, .ios-select:focus, .ios-textarea:focus {
+            border-color: var(--ios-green);
+            box-shadow: 0 0 0 4px rgba(46, 196, 182, 0.1);
+        }
+
+        .ios-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .image-upload-area {
+            border: 2px dashed rgba(247, 249, 249, 0.25);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(247, 249, 249, 0.05);
+        }
+
+        .image-upload-area:hover {
+            border-color: var(--ios-green);
+            background: rgba(46, 196, 182, 0.1);
+        }
+
+        .image-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .image-preview-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--ios-green);
+        }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-img {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 28px;
+            height: 28px;
+            background: var(--ios-red);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .color-picker {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .color-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.selected {
+            border-color: white;
+            box-shadow: 0 0 0 3px var(--ios-green);
+            transform: scale(1.15);
+        }
+
+        .color-option.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .selected-colors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .selected-color {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .color-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        /* قسم السؤال المخصص */
+        .custom-field-section {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 2px solid rgba(46, 196, 182, 0.2);
+        }
+
+        .custom-field-title {
+            color: var(--ios-orange);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .options-list {
+            margin-bottom: 16px;
+        }
+
+        .option-item {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .option-input {
+            flex: 1;
+            background: rgba(247,249,249,0.1);
+            border: 1px solid rgba(247,249,249,0.15);
+            border-radius: 12px;
+            padding: 14px;
+            color: var(--ios-label-primary);
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .option-input:focus {
+            border-color: var(--ios-orange);
+            box-shadow: 0 0 0 4px rgba(255,159,28,0.1);
+        }
+
+        .btn-remove-option {
+            background: rgba(231,29,54,0.2);
+            color: var(--ios-red);
+            border: 1px solid rgba(231,29,54,0.3);
+            border-radius: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-remove-option:hover {
+            background: rgba(231,29,54,0.4);
+        }
+
+        .btn-add-option {
+            background: rgba(46,196,182,0.2);
+            color: var(--ios-green);
+            border: 1px solid rgba(46,196,182,0.3);
+            border-radius: 10px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 8px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-add-option:hover {
+            background: rgba(46,196,182,0.4);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--ios-green) 0%, #25A89C 100%);
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 16px;
+            box-shadow: 0 8px 30px rgba(46, 196, 182, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(46, 196, 182, 0.4);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--ios-label-primary);
+            border: var(--glass-border);
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 12px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(247, 249, 249, 0.2);
+        }
+
+        .toast {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 60, 60, 0.95);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <a href="admin.html" class="back-btn">← رجوع</a>
+        <h1>➕ إضافة منتج جديد</h1>
+        <div style="width: 60px;"></div>
+    </header>
+
+    <div class="admin-content">
+        <div class="form-section">
+            <div class="form-title">🆕 منتج جديد</div>
+            <div class="form-subtitle">أدخل بيانات المنتج الجديد أدناه</div>
+
+            <div class="form-group">
+                <label class="form-label">📷 معرف السلعة (4 أرقام)</label>
+                <input type="text" id="productItemId" class="ios-input" placeholder="مثال: 1234" maxlength="4" inputmode="numeric">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🏷️ اسم المنتج *</label>
+                <input type="text" id="productName" class="ios-input" placeholder="أدخل اسم المنتج">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">💵 السعر (دينار)</label>
+                    <input type="number" id="productPriceIQD" class="ios-input" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">💵 السعر (دولار)</label>
+                    <input type="number" id="productPriceUSD" class="ios-input" placeholder="0">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">📂 القسم الرئيسي *</label>
+                    <select id="productCategory" class="ios-select" onchange="updateSubcategories()">
+                        <option value="">اختر القسم</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">📁 القسم الفرعي</label>
+                    <select id="productSubcategory" class="ios-select">
+                        <option value="">بدون</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🎨 الألوان المتوفرة</label>
+                <div class="color-picker" id="colorPicker"></div>
+                <div class="selected-colors" id="selectedColors"></div>
+            </div>
+
+            <!-- ===== قسم العرض فقط ===== -->
+            <div class="form-group" style="margin-top: 16px;">
+                <label class="form-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="displayOnlyCheckbox" onchange="togglePriceFields()">
+                    <span>عرض فقط (بدون سعر وبدون شراء)</span>
+                </label>
+                <p style="font-size: 12px; color: var(--ios-label-secondary); margin-top: 4px;">عند تفعيل هذا الخيار، لن يظهر السعر ولا أزرار الشراء للمنتج في المتجر.</p>
+            </div>
+
+            <!-- ===== قسم نوع التوصيل ===== -->
+            <div class="form-group">
+                <label class="form-label">🚚 نوع التوصيل</label>
+                <select id="productShippingType" class="ios-select">
+                    <option value="general">توصيل عام (جميع المحافظات)</option>
+                    <option value="internal">توصيل داخلي (بابل فقط)</option>
+                </select>
+                <p style="font-size: 12px; color: var(--ios-label-secondary); margin-top: 4px;">
+                    المنتجات ذات التوصيل الداخلي تُشحن فقط داخل محافظة بابل.
+                </p>
+            </div>
+
+            <!-- ===== قسم السؤال المخصص ===== -->
+            <div class="custom-field-section">
+                <div class="custom-field-title">❓ سؤال مخصص للمنتج (اختياري)</div>
+                <div class="form-group">
+                    <label class="form-label">نص السؤال (مثال: اختر اللون / اختر الذاكرة)</label>
+                    <input type="text" id="customQuestion" class="ios-input" placeholder="مثال: اختر اللون المتاح">
+                </div>
+                <div class="form-group" id="optionsContainer">
+                    <label class="form-label">الخيارات</label>
+                    <div id="optionsList" class="options-list"></div>
+                    <button type="button" class="btn-add-option" onclick="addOptionField()">
+                        <i class="fas fa-plus"></i> إضافة خيار
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📝 الوصف</label>
+                <textarea id="productDesc" class="ios-textarea" placeholder="وصف المنتج..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📸 الصور (حد أقصى 5)</label>
+                <div class="image-upload-area" onclick="document.getElementById('productImages').click()">
+                    <p style="font-size: 48px; margin-bottom: 12px;">📷</p>
+                    <p>اضغط هنا لرفع الصور</p>
+                    <p style="font-size: 13px; color: var(--ios-label-secondary); margin-top: 8px;">أو اسحب الصور هنا</p>
+                    <input type="file" id="productImages" hidden multiple accept="image/*" onchange="handleImageUpload(this.files)">
+                </div>
+                <div class="image-preview-grid" id="imagePreviewGrid"></div>
+            </div>
+
+            <button class="btn-primary" onclick="saveProduct()">💾 حفظ المنتج</button>
+            <button class="btn-secondary" onclick="resetForm()">↺ مسح النموذج</button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            onSnapshot,
+            getDocs
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
+            authDomain: "hussain-1290b.firebaseapp.com",
+            projectId: "hussain-1290b",
+            storageBucket: "hussain-1290b.firebasestorage.app",
+            messagingSenderId: "798281706738",
+            appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const AVAILABLE_COLORS = [
+            { name: "أسود", code: "#000000" },
+            { name: "أبيض", code: "#FFFFFF" },
+            { name: "أحمر", code: "#E71D36" },
+            { name: "أزرق", code: "#007AFF" },
+            { name: "أخضر", code: "#2EC4B6" },
+            { name: "أصفر", code: "#FFD60A" },
+            { name: "برتقالي", code: "#FF9F1C" },
+            { name: "بنفسجي", code: "#AF52DE" },
+            { name: "وردي", code: "#FF2D55" },
+            { name: "رمادي", code: "#8E8E93" },
+            { name: "بني", code: "#A2845E" },
+            { name: "ذهبي", code: "#FFD700" },
+            { name: "فضي", code: "#C0C0C0" },
+            { name: "كحلي", code: "#1C1C8E" },
+            { name: "زيتوني", code: "#808000" }
+        ];
+
+        let categories = [];
+        let subcategories = [];
+        let itemIdRanges = [];
+        let tempImages = [];
+        let selectedColors = [];
+
+        // إدارة الخيارات الديناميكية
+        window.addOptionField = function(value = '') {
+            const container = document.getElementById('optionsList');
+            const optionId = `opt_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+            const div = document.createElement('div');
+            div.className = 'option-item';
+            div.id = optionId;
+            div.innerHTML = `
+                <input type="text" class="option-input" placeholder="أدخل خياراً" value="${value.replace(/"/g, '&quot;')}">
+                <button type="button" class="btn-remove-option" onclick="removeOptionField('${optionId}')">
+                    <i class="fas fa-trash"></i> مسح
+                </button>
+            `;
+            container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+
+        window.removeOptionField = function(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.animation = 'fadeOut 0.2s ease';
+                setTimeout(() => el.remove(), 200);
+            }
+        };
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateY(0); }
+                to { opacity: 0; transform: translateY(-5px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        function getOptionsArray() {
+            const inputs = document.querySelectorAll('#optionsList .option-input');
+            return Array.from(inputs).map(input => input.value.trim()).filter(v => v !== '');
+        }
+
+        // Check auth
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin.html';
+        }
+
+        // Setup color picker
+        function setupColorPicker() {
+            const picker = document.getElementById('colorPicker');
+            picker.innerHTML = AVAILABLE_COLORS.map(color => `
+                <div class="color-option" 
+                     style="background-color: ${color.code}; ${color.code === '#FFFFFF' ? 'border: 2px solid rgba(0,0,0,0.2);' : ''}"
+                     data-name="${color.name}"
+                     onclick="toggleColor('${color.name}', '${color.code}', this)">
+                </div>
+            `).join('');
+        }
+
+        window.toggleColor = function(name, code, element) {
+            const index = selectedColors.findIndex(c => c.name === name);
+            if (index > -1) {
+                selectedColors.splice(index, 1);
+                element.classList.remove('selected');
+            } else {
+                selectedColors.push({ name, code });
+                element.classList.add('selected');
+            }
+            renderSelectedColors();
+        };
+
+        function renderSelectedColors() {
+            const container = document.getElementById('selectedColors');
+            if (selectedColors.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            container.innerHTML = selectedColors.map((color, index) => `
+                <div class="selected-color">
+                    <div class="color-dot" style="background: ${color.code}; ${color.code === '#FFFFFF' ? 'border: 1px solid rgba(0,0,0,0.3);' : ''}"></div>
+                    <span>${color.name}</span>
+                    <button onclick="removeColor(${index})" style="background: none; border: none; color: var(--ios-red); cursor: pointer; margin-right: 4px;">×</button>
+                </div>
+            `).join('');
+        }
+
+        window.removeColor = function(index) {
+            const color = selectedColors[index];
+            selectedColors.splice(index, 1);
+            document.querySelectorAll('.color-option').forEach(opt => {
+                if (opt.dataset.name === color.name) opt.classList.remove('selected');
+            });
+            renderSelectedColors();
+        };
+
+        // Load categories
+        onSnapshot(collection(db, "categories"), (snapshot) => {
+            categories = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") categories.push(doc.data().name);
+            });
+            updateCategorySelect();
+        });
+
+        onSnapshot(collection(db, "subcategories"), (snapshot) => {
+            subcategories = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") subcategories.push({ id: doc.id, ...doc.data() });
+            });
+        });
+
+        // Load itemIdRanges
+        onSnapshot(collection(db, "itemIdRanges"), (snapshot) => {
+            itemIdRanges = [];
+            snapshot.forEach((doc) => {
+                itemIdRanges.push({ id: doc.id, ...doc.data() });
+            });
+        });
+
+        function updateCategorySelect() {
+            const select = document.getElementById('productCategory');
+            select.innerHTML = '<option value="">اختر القسم</option>' + 
+                categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+
+        window.updateSubcategories = function() {
+            const mainCat = document.getElementById('productCategory').value;
+            const subSelect = document.getElementById('productSubcategory');
+            const filtered = subcategories.filter(s => s.parentCategory === mainCat);
+            subSelect.innerHTML = '<option value="">بدون</option>' + 
+                filtered.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+        };
+
+        // ===== دالة تفعيل/تعطيل حقول الأسعار =====
+        window.togglePriceFields = function() {
+            const isChecked = document.getElementById('displayOnlyCheckbox').checked;
+            const priceIQD = document.getElementById('productPriceIQD');
+            const priceUSD = document.getElementById('productPriceUSD');
+            if (isChecked) {
+                priceIQD.disabled = true;
+                priceUSD.disabled = true;
+                priceIQD.value = '0';
+                priceUSD.value = '0';
+            } else {
+                priceIQD.disabled = false;
+                priceUSD.disabled = false;
+            }
+        };
+
+        window.handleImageUpload = function(files) {
+            if (tempImages.length + files.length > 5) {
+                showToast("الحد الأقصى 5 صور");
+                return;
+            }
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 1200;
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > MAX_WIDTH) {
+                            height = height * MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        tempImages.push(canvas.toDataURL('image/jpeg', 0.7));
+                        renderImagePreviews();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        };
+
+        function renderImagePreviews() {
+            const grid = document.getElementById('imagePreviewGrid');
+            grid.innerHTML = tempImages.map((src, index) => `
+                <div class="image-preview-item">
+                    <img src="${src}" alt="Preview">
+                    <button class="remove-img" onclick="removeImage(${index})">×</button>
+                </div>
+            `).join('');
+        }
+
+        window.removeImage = function(index) {
+            tempImages.splice(index, 1);
+            renderImagePreviews();
+        };
+
+        window.saveProduct = async function() {
+            const itemId = document.getElementById('productItemId').value.trim();
+            const name = document.getElementById('productName').value.trim();
+            const priceIQD = document.getElementById('productPriceIQD').value;
+            const priceUSD = document.getElementById('productPriceUSD').value;
+            const cat = document.getElementById('productCategory').value;
+            const subCat = document.getElementById('productSubcategory').value;
+            const desc = document.getElementById('productDesc').value;
+            const displayOnly = document.getElementById('displayOnlyCheckbox').checked;
+            const shippingType = document.getElementById('productShippingType').value;
+
+            // قراءة بيانات السؤال المخصص
+            const customQuestion = document.getElementById('customQuestion').value.trim();
+            const customOptionsArray = getOptionsArray();
+            let customField = null;
+            if (customQuestion && customOptionsArray.length > 0) {
+                customField = {
+                    question: customQuestion,
+                    options: customOptionsArray
+                };
+            }
+
+            if (!name || !cat) {
+                showToast("❌ يرجى إدخال الاسم والقسم");
+                return;
+            }
+
+            // --- التحقق من معرف السلعة ---
+            if (itemId) {
+                if (!/^[0-9]{4}$/.test(itemId)) {
+                    showToast("❌ معرف السلعة يجب أن يكون 4 أرقام");
+                    return;
+                }
+
+                const productsSnapshot = await getDocs(collection(db, "products"));
+                let duplicate = false;
+                productsSnapshot.forEach((doc) => {
+                    if (doc.data().itemId === itemId) {
+                        duplicate = true;
+                    }
+                });
+                if (duplicate) {
+                    showToast("❌ هذا المعرف مستخدم بالفعل لمنتج آخر");
+                    return;
+                }
+
+                if (subCat) {
+                    const range = itemIdRanges.find(r => r.subCategory === subCat && r.parentCategory === cat);
+                    if (range) {
+                        const itemIdNum = parseInt(itemId);
+                        if (itemIdNum < range.startRange || itemIdNum > range.endRange) {
+                            showToast(`❌ المعرف يجب أن يكون ضمن النطاق ${range.startRange} - ${range.endRange} لهذا القسم`);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            const productData = {
+                name,
+                itemId: itemId || null,
+                priceIQD: priceIQD ? parseFloat(priceIQD) : 0,
+                priceUSD: priceUSD ? parseFloat(priceUSD) : 0,
+                cat,
+                subCat: subCat || null,
+                desc,
+                images: tempImages,
+                colors: selectedColors,
+                customField: customField,
+                displayOnly: displayOnly,
+                shippingType: shippingType,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            try {
+                const newRef = doc(collection(db, "products"));
+                productData.id = newRef.id;
+                await setDoc(newRef, productData);
+                showToast("✅ تم إضافة المنتج بنجاح");
+                resetForm();
+            } catch (error) {
+                console.error("Save error:", error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        window.resetForm = function() {
+            document.getElementById('productItemId').value = '';
+            document.getElementById('productName').value = '';
+            document.getElementById('productPriceIQD').value = '';
+            document.getElementById('productPriceUSD').value = '';
+            document.getElementById('productCategory').value = '';
+            document.getElementById('productSubcategory').value = '';
+            document.getElementById('productDesc').value = '';
+            document.getElementById('customQuestion').value = '';
+            document.getElementById('optionsList').innerHTML = '';
+            document.getElementById('productShippingType').value = 'general';
+            tempImages = [];
+            selectedColors = [];
+            document.getElementById('displayOnlyCheckbox').checked = false;
+            togglePriceFields(); // إعادة تفعيل حقول الأسعار
+            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+            renderImagePreviews();
+            renderSelectedColors();
+        };
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        setupColorPicker();
+    </script>
+</body>
+</html>
