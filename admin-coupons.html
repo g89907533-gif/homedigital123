@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>إدارة الكوبونات - لوحة الإدارة</title>
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display-all" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ios-bg-primary: #0A2F2F;
+            --glass-bg: rgba(12, 45, 45, 0.65);
+            --glass-border: 0.5px solid rgba(247, 249, 249, 0.15);
+            --glass-blur: blur(40px) saturate(210%) brightness(1.1);
+            --ios-orange: #FF9F1C;
+            --ios-green: #2EC4B6;
+            --ios-red: #E71D36;
+            --ios-purple: #5A9A9A;
+            --ios-label-primary: #F7F9F9;
+            --ios-label-secondary: rgba(247, 249, 249, 0.8);
+            --radius-xl: 28px;
+            --sat: env(safe-area-inset-top);
+            --sab: env(safe-area-inset-bottom);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'SF Pro Display', 'Cairo', -apple-system, sans-serif; }
+        body {
+            background: var(--ios-bg-primary);
+            color: var(--ios-label-primary);
+            direction: rtl;
+            min-height: 100vh;
+            padding-top: var(--sat);
+            padding-bottom: var(--sab);
+        }
+        .admin-header {
+            background: rgba(10, 47, 47, 0.95);
+            backdrop-filter: blur(60px);
+            border-bottom: var(--glass-border);
+            padding: 16px 24px;
+            padding-top: calc(16px + var(--sat));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .admin-header h1 { font-size: 20px; color: var(--ios-orange); }
+        .back-btn {
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--ios-label-primary);
+            border: var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .admin-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .section-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .section-title {
+            color: var(--ios-orange);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+        .ios-input, .ios-select {
+            width: 100%;
+            background: rgba(247, 249, 249, 0.1);
+            border: var(--glass-border);
+            border-radius: 14px;
+            padding: 16px;
+            color: var(--ios-label-primary);
+            font-size: 16px;
+            outline: none;
+        }
+        .ios-input:focus, .ios-select:focus { border-color: var(--ios-orange); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--ios-green) 0%, #25A89C 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(46, 196, 182, 0.4); }
+        .btn-secondary {
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--ios-label-primary);
+            border: var(--glass-border);
+            padding: 14px 24px;
+            border-radius: 14px;
+            cursor: pointer;
+        }
+        .btn-edit {
+            background: rgba(255, 159, 28, 0.2);
+            color: var(--ios-orange);
+            border: 1px solid rgba(255, 159, 28, 0.3);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        .btn-delete {
+            background: rgba(231, 29, 54, 0.2);
+            color: var(--ios-red);
+            border: 1px solid rgba(231, 29, 54, 0.3);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .btn-save { background: var(--ios-green); color: white; border: none; padding: 8px 16px; border-radius: 10px; cursor: pointer; margin-left: 8px; }
+        .btn-cancel { background: rgba(247, 249, 249, 0.1); color: var(--ios-label-secondary); border: var(--glass-border); padding: 8px 16px; border-radius: 10px; cursor: pointer; }
+        .coupon-list { display: flex; flex-direction: column; gap: 12px; }
+        .coupon-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        .coupon-item:hover { background: rgba(0, 0, 0, 0.3); transform: translateX(-5px); }
+        .coupon-info .code { font-weight: 800; font-size: 18px; color: var(--ios-orange); }
+        .coupon-info .discount { color: var(--ios-green); font-weight: 700; }
+        .coupon-info .meta { font-size: 13px; color: var(--ios-label-secondary); margin-top: 4px; }
+        .empty-state { text-align: center; padding: 40px; color: var(--ios-label-secondary); }
+        .toast {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 60, 60, 0.95);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .toast.show { opacity: 1; }
+        .edit-input {
+            background: rgba(247, 249, 249, 0.15);
+            border: 1px solid var(--ios-orange);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--ios-label-primary);
+            font-size: 14px;
+            width: 180px;
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <a href="admin.html" class="back-btn">← رجوع</a>
+        <h1>🏷️ إدارة الكوبونات</h1>
+        <div style="width: 60px;"></div>
+    </header>
+
+    <div class="admin-content">
+        <!-- Add/Edit Form -->
+        <div class="section-card">
+            <div class="section-title">➕ إضافة / تعديل كوبون</div>
+            <div id="editForm" style="display: none;">
+                <input type="hidden" id="editId">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label class="form-label">كود الكوبون * (1-10 أحرف/أرقام)</label>
+                    <input type="text" id="editCode" class="ios-input" placeholder="مثال: SALE10" maxlength="10">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">نسبة الخصم (%) *</label>
+                        <input type="number" id="editDiscount" class="ios-input" placeholder="10" min="1" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الحد الأدنى للطلب (دينار)</label>
+                        <input type="number" id="editMinOrder" class="ios-input" placeholder="0" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">عدد مرات الاستخدام المسموح</label>
+                        <input type="number" id="editUsageLimit" class="ios-input" placeholder="1" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">عدد المرات المستخدمة</label>
+                        <input type="number" id="editUsedCount" class="ios-input" readonly disabled style="opacity:0.8;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn-primary" onclick="saveCoupon()">💾 حفظ</button>
+                    <button class="btn-secondary" onclick="cancelEdit()">إلغاء</button>
+                </div>
+            </div>
+            <div id="addForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">كود الكوبون *</label>
+                        <input type="text" id="newCode" class="ios-input" placeholder="مثال: WELCOME10" maxlength="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">نسبة الخصم (%) *</label>
+                        <input type="number" id="newDiscount" class="ios-input" placeholder="10" min="1" max="100">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">الحد الأدنى للطلب (دينار)</label>
+                        <input type="number" id="newMinOrder" class="ios-input" placeholder="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">عدد مرات الاستخدام المسموح</label>
+                        <input type="number" id="newUsageLimit" class="ios-input" placeholder="1" min="1">
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="addCoupon()">➕ إضافة كوبون</button>
+            </div>
+        </div>
+
+        <!-- Existing Coupons List -->
+        <div class="section-card">
+            <div class="section-title">📋 الكوبونات الحالية</div>
+            <div id="couponsList" class="coupon-list">
+                <div class="empty-state">جاري التحميل...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
+            authDomain: "hussain-1290b.firebaseapp.com",
+            projectId: "hussain-1290b",
+            storageBucket: "hussain-1290b.firebasestorage.app",
+            messagingSenderId: "798281706738",
+            appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let coupons = [];
+
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') window.location.href = 'admin.html';
+
+        onSnapshot(query(collection(db, "coupons"), orderBy("createdAt", "desc")), (snapshot) => {
+            coupons = [];
+            snapshot.forEach(doc => { if (doc.id !== "init") coupons.push({ id: doc.id, ...doc.data() }); });
+            renderCoupons();
+        });
+
+        function renderCoupons() {
+            const container = document.getElementById('couponsList');
+            if (coupons.length === 0) {
+                container.innerHTML = '<div class="empty-state">لا توجد كوبونات</div>';
+                return;
+            }
+            container.innerHTML = coupons.map(c => `
+                <div class="coupon-item">
+                    <div class="coupon-info">
+                        <div class="code">${c.code}</div>
+                        <div class="discount">${c.discountPercent}% خصم</div>
+                        <div class="meta">
+                            ${c.minOrderAmount ? `الحد الأدنى: ${c.minOrderAmount.toLocaleString()} د.ع | ` : ''}
+                            المستخدم: ${c.usedCount || 0} / ${c.usageLimit || 1}
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn-edit" onclick="editCoupon('${c.id}')">✏️ تعديل</button>
+                        <button class="btn-delete" onclick="deleteCoupon('${c.id}')">🗑️ حذف</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.addCoupon = async function() {
+            const code = document.getElementById('newCode').value.trim().toUpperCase();
+            const discount = parseInt(document.getElementById('newDiscount').value);
+            const minOrder = parseFloat(document.getElementById('newMinOrder').value) || 0;
+            const usageLimit = parseInt(document.getElementById('newUsageLimit').value) || 1;
+
+            if (!code || isNaN(discount) || discount < 1 || discount > 100) {
+                showToast("❌ أدخل كود صالح (1-10 أحرف/أرقام) ونسبة خصم بين 1 و100");
+                return;
+            }
+            if (!/^[A-Za-z0-9]{1,10}$/.test(code)) {
+                showToast("❌ الكود يجب أن يكون من 1 إلى 10 أحرف أو أرقام فقط");
+                return;
+            }
+            if (coupons.some(c => c.code === code)) {
+                showToast("❌ هذا الكود موجود بالفعل");
+                return;
+            }
+
+            try {
+                const newRef = doc(collection(db, "coupons"));
+                await setDoc(newRef, {
+                    code,
+                    discountPercent: discount,
+                    minOrderAmount: minOrder,
+                    usageLimit,
+                    usedCount: 0,
+                    createdAt: new Date().toISOString()
+                });
+                showToast("✅ تم إضافة الكوبون");
+                document.getElementById('newCode').value = '';
+                document.getElementById('newDiscount').value = '';
+                document.getElementById('newMinOrder').value = '';
+                document.getElementById('newUsageLimit').value = '';
+            } catch (error) {
+                console.error(error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        window.editCoupon = function(id) {
+            const coupon = coupons.find(c => c.id === id);
+            if (!coupon) return;
+
+            document.getElementById('editId').value = coupon.id;
+            document.getElementById('editCode').value = coupon.code;
+            document.getElementById('editDiscount').value = coupon.discountPercent;
+            document.getElementById('editMinOrder').value = coupon.minOrderAmount || 0;
+            document.getElementById('editUsageLimit').value = coupon.usageLimit || 1;
+            document.getElementById('editUsedCount').value = coupon.usedCount || 0;
+
+            document.getElementById('addForm').style.display = 'none';
+            document.getElementById('editForm').style.display = 'block';
+        };
+
+        window.saveCoupon = async function() {
+            const id = document.getElementById('editId').value;
+            const code = document.getElementById('editCode').value.trim().toUpperCase();
+            const discount = parseInt(document.getElementById('editDiscount').value);
+            const minOrder = parseFloat(document.getElementById('editMinOrder').value) || 0;
+            const usageLimit = parseInt(document.getElementById('editUsageLimit').value) || 1;
+            const usedCount = parseInt(document.getElementById('editUsedCount').value) || 0;
+
+            if (!code || isNaN(discount) || discount < 1 || discount > 100) {
+                showToast("❌ أدخل بيانات صحيحة");
+                return;
+            }
+            if (!/^[A-Za-z0-9]{1,10}$/.test(code)) {
+                showToast("❌ الكود يجب أن يكون من 1 إلى 10 أحرف أو أرقام فقط");
+                return;
+            }
+            if (coupons.some(c => c.code === code && c.id !== id)) {
+                showToast("❌ هذا الكود موجود بالفعل");
+                return;
+            }
+
+            try {
+                await setDoc(doc(db, "coupons", id), {
+                    code,
+                    discountPercent: discount,
+                    minOrderAmount: minOrder,
+                    usageLimit,
+                    usedCount,
+                    updatedAt: new Date().toISOString()
+                }, { merge: true });
+                showToast("✅ تم تحديث الكوبون");
+                cancelEdit();
+            } catch (error) {
+                console.error(error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        window.cancelEdit = function() {
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById('addForm').style.display = 'block';
+            document.getElementById('editId').value = '';
+        };
+
+        window.deleteCoupon = async function(id) {
+            if (!confirm("هل أنت متأكد من حذف هذا الكوبون؟")) return;
+            try {
+                await deleteDoc(doc(db, "coupons", id));
+                showToast("🗑️ تم الحذف");
+            } catch (error) {
+                console.error(error);
+                showToast("❌ حدث خطأ");
+            }
+        };
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>
