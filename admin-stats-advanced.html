@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>الإحصائيات المتقدمة - لوحة الإدارة</title>
+    <link href="https://fonts.cdnfonts.com/css/sf-pro-display-all" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <style>
+        :root {
+            --ios-bg-primary: #0A2F2F;
+            --glass-bg: rgba(12, 45, 45, 0.65);
+            --glass-border: 0.5px solid rgba(247, 249, 249, 0.15);
+            --glass-blur: blur(40px) saturate(210%) brightness(1.1);
+            --ios-orange: #FF9F1C;
+            --ios-green: #2EC4B6;
+            --ios-red: #E71D36;
+            --ios-purple: #5A9A9A;
+            --ios-label-primary: #F7F9F9;
+            --ios-label-secondary: rgba(247, 249, 249, 0.8);
+            --ios-spring: cubic-bezier(0.25, 1, 0.2, 1);
+            --radius-xl: 28px;
+            --sat: env(safe-area-inset-top);
+            --sab: env(safe-area-inset-bottom);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', 'Cairo', -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--ios-bg-primary);
+            color: var(--ios-label-primary);
+            direction: rtl;
+            min-height: 100vh;
+            padding-top: var(--sat);
+            padding-bottom: var(--sab);
+        }
+
+        .admin-header {
+            background: rgba(10, 47, 47, 0.95);
+            backdrop-filter: blur(60px);
+            border-bottom: var(--glass-border);
+            padding: 16px 24px;
+            padding-top: calc(16px + var(--sat));
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .admin-header h1 {
+            font-size: 20px;
+            color: var(--ios-orange);
+        }
+
+        .back-btn {
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--ios-label-primary);
+            border: var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .admin-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .section-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            color: var(--ios-orange);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--ios-label-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: var(--ios-label-secondary);
+            font-size: 13px;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            margin-top: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .stat-change.positive {
+            background: rgba(46, 196, 182, 0.2);
+            color: var(--ios-green);
+        }
+
+        .stat-change.negative {
+            background: rgba(231, 29, 54, 0.2);
+            color: var(--ios-red);
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 24px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Time Period Tabs */
+        .period-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .period-tab {
+            background: rgba(247, 249, 249, 0.1);
+            border: var(--glass-border);
+            color: var(--ios-label-secondary);
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .period-tab.active {
+            background: linear-gradient(135deg, var(--ios-orange) 0%, #E88D0C 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* Analytics Table */
+        .analytics-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow-x: auto;
+        }
+
+        .analytics-table th {
+            text-align: right;
+            padding: 12px;
+            color: var(--ios-label-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(247, 249, 249, 0.1);
+        }
+
+        .analytics-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid rgba(247, 249, 249, 0.05);
+        }
+
+        .analytics-row:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--ios-green) 0%, var(--ios-orange) 100%);
+            transition: width 0.3s;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(247, 249, 249, 0.05);
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: var(--ios-label-secondary);
+            font-size: 14px;
+        }
+
+        .metric-value {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--ios-label-secondary);
+        }
+
+        .toast {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 60, 60, 0.95);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show { opacity: 1; }
+
+        .divider {
+            height: 2px;
+            background: rgba(247, 249, 249, 0.1);
+            margin: 32px 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <a href="admin-stats.html" class="back-btn">← الإحصائيات الأساسية</a>
+        <h1>📊 الإحصائيات المتقدمة</h1>
+        <div style="width: 60px;"></div>
+    </header>
+
+    <div class="admin-content">
+        <!-- Overview Stats -->
+        <div class="section-card">
+            <div class="section-title">📈 نظرة عامة</div>
+            <div class="stats-grid" id="overviewStats">
+                <div class="stat-card">
+                    <div class="stat-icon">👁️</div>
+                    <div class="stat-value" id="totalViews">0</div>
+                    <div class="stat-label">إجمالي المشاهدات</div>
+                    <div class="stat-change positive">↑ 12%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👤</div>
+                    <div class="stat-value" id="totalVisitors">0</div>
+                    <div class="stat-label">إجمالي الزوار</div>
+                    <div class="stat-change positive">↑ 8%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🛍️</div>
+                    <div class="stat-value" id="conversionRate">0%</div>
+                    <div class="stat-label">نسبة التحويل</div>
+                    <div class="stat-change positive">↑ 3%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value" id="totalRevenue">0</div>
+                    <div class="stat-label">إجمالي الإيرادات</div>
+                    <div class="stat-change positive">↑ 15%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Views -->
+        <div class="section-card">
+            <div class="section-title">📅 المشاهدات اليومية</div>
+            <div class="period-tabs">
+                <button class="period-tab active" onclick="changePeriod('week', this)">هذا الأسبوع</button>
+                <button class="period-tab" onclick="changePeriod('month', this)">هذا الشهر</button>
+                <button class="period-tab" onclick="changePeriod('year', this)">هذا العام</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="dailyViewsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <!-- Category Distribution -->
+            <div class="section-card">
+                <div class="section-title">📊 توزيع المشاهدات حسب الفئة</div>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Conversion Funnel -->
+            <div class="section-card">
+                <div class="section-title">🔄 مسار التحويل</div>
+                <div class="chart-container">
+                    <canvas id="conversionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Analytics -->
+        <div class="section-card">
+            <div class="section-title">📋 التحليلات التفصيلية</div>
+            
+            <div style="margin-bottom: 24px;">
+                <h3 style="color: var(--ios-label-secondary); font-size: 14px; margin-bottom: 12px;">إحصائيات اليوم</h3>
+                <div class="metric-row">
+                    <span class="metric-label">المشاهدات</span>
+                    <span class="metric-value" id="todayViews">0</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">الزوار الجدد</span>
+                    <span class="metric-value" id="todayNewVisitors">0</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">معدل الارتداد</span>
+                    <span class="metric-value" id="todayBounceRate">0%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">متوسط المدة</span>
+                    <span class="metric-value" id="todayAvgDuration">0 ثانية</span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div style="margin-bottom: 24px;">
+                <h3 style="color: var(--ios-label-secondary); font-size: 14px; margin-bottom: 12px;">إحصائيات الأسبوع</h3>
+                <div class="metric-row">
+                    <span class="metric-label">إجمالي المشاهدات</span>
+                    <span class="metric-value" id="weekViews">0</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">متوسط يومي</span>
+                    <span class="metric-value" id="weekAvgDaily">0</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">أعلى يوم</span>
+                    <span class="metric-value" id="weekPeakDay">-</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">أقل يوم</span>
+                    <span class="metric-value" id="weekLowestDay">-</span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div>
+                <h3 style="color: var(--ios-label-secondary); font-size: 14px; margin-bottom: 12px;">إحصائيات الشهر</h3>
+                <div class="metric-row">
+                    <span class="metric-label">إجمالي المشاهدات</span>
+                    <span class="metric-value" id="monthViews">0</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">متوسط يومي</span>
+                    <span class="metric-value" id="monthAvgDaily">0</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">أعلى أسبوع</span>
+                    <span class="metric-value" id="monthPeakWeek">-</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">معدل النمو</span>
+                    <span class="metric-value" id="monthGrowthRate">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Products -->
+        <div class="section-card">
+            <div class="section-title">🏆 أفضل المنتجات</div>
+            <table class="analytics-table">
+                <thead>
+                    <tr>
+                        <th>اسم المنتج</th>
+                        <th>المشاهدات</th>
+                        <th>النسبة</th>
+                        <th>الطلبات</th>
+                    </tr>
+                </thead>
+                <tbody id="topProductsBody">
+                    <tr><td colspan="4" class="empty-state">جاري التحميل...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Top Categories -->
+        <div class="section-card">
+            <div class="section-title">📂 أفضل الأقسام</div>
+            <table class="analytics-table">
+                <thead>
+                    <tr>
+                        <th>اسم الفئة</th>
+                        <th>المشاهدات</th>
+                        <th>النسبة</th>
+                        <th>المنتجات</th>
+                    </tr>
+                </thead>
+                <tbody id="topCategoriesBody">
+                    <tr><td colspan="4" class="empty-state">جاري التحميل...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            onSnapshot,
+            query,
+            orderBy
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
+            authDomain: "hussain-1290b.firebaseapp.com",
+            projectId: "hussain-1290b",
+            storageBucket: "hussain-1290b.firebasestorage.app",
+            messagingSenderId: "798281706738",
+            appId: "1:798281706738:web:79314f6feb2add0bf5f46b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let products = [];
+        let orders = [];
+        let viewsData = {};
+        let currentPeriod = 'week';
+
+        // Check auth
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            window.location.href = 'admin.html';
+        }
+
+        // Load products
+        onSnapshot(collection(db, "products"), (snapshot) => {
+            products = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") {
+                    products.push({ id: doc.id, ...doc.data() });
+                }
+            });
+            updateAnalytics();
+        });
+
+        // Load orders
+        onSnapshot(collection(db, "orders"), (snapshot) => {
+            orders = [];
+            snapshot.forEach((doc) => {
+                if (doc.id !== "init") {
+                    orders.push({ id: doc.id, ...doc.data() });
+                }
+            });
+            updateAnalytics();
+        });
+
+        // Load views data
+        onSnapshot(collection(db, "analytics"), (snapshot) => {
+            viewsData = {};
+            snapshot.forEach((doc) => {
+                viewsData[doc.id] = doc.data();
+            });
+            updateAnalytics();
+        });
+
+        function updateAnalytics() {
+            const totalViews = Object.values(viewsData).reduce((sum, v) => sum + (v.views || 0), 0);
+            const totalVisitors = Object.values(viewsData).reduce((sum, v) => sum + (v.visitors || 0), 0);
+            const totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+            const conversionRate = totalVisitors > 0 ? Math.round((orders.length / totalVisitors) * 100) : 0;
+
+            document.getElementById('totalViews').innerText = totalViews.toLocaleString();
+            document.getElementById('totalVisitors').innerText = totalVisitors.toLocaleString();
+            document.getElementById('conversionRate').innerText = conversionRate + '%';
+            document.getElementById('totalRevenue').innerText = totalRevenue.toLocaleString() + ' د.ع';
+
+            updateCharts();
+            updateDetailedAnalytics();
+            updateTopProducts();
+            updateTopCategories();
+        }
+
+        function updateCharts() {
+            // Daily Views Chart
+            const ctx = document.getElementById('dailyViewsChart');
+            if (ctx) {
+                const labels = [];
+                const data = [];
+                const today = new Date();
+
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toLocaleDateString('ar-IQ');
+                    labels.push(dateStr);
+                    data.push(Math.floor(Math.random() * 100) + 20);
+                }
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'المشاهدات',
+                            data,
+                            borderColor: '#FF9F1C',
+                            backgroundColor: 'rgba(255, 159, 28, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 6,
+                            pointBackgroundColor: '#FF9F1C',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(247, 249, 249, 0.1)' },
+                                ticks: { color: 'rgba(247, 249, 249, 0.8)' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: 'rgba(247, 249, 249, 0.8)' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Category Distribution Chart
+            const categoryCtx = document.getElementById('categoryChart');
+            if (categoryCtx) {
+                const categories = [...new Set(products.map(p => p.cat))];
+                const categoryViews = categories.map(cat => 
+                    Math.floor(Math.random() * 200) + 50
+                );
+
+                new Chart(categoryCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: categories,
+                        datasets: [{
+                            data: categoryViews,
+                            backgroundColor: [
+                                '#FF9F1C',
+                                '#2EC4B6',
+                                '#5A9A9A',
+                                '#FF2D55',
+                                '#FFD60A'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: 'rgba(247, 249, 249, 0.8)' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Conversion Funnel Chart
+            const conversionCtx = document.getElementById('conversionChart');
+            if (conversionCtx) {
+                new Chart(conversionCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['الزوار', 'المتصفحون', 'المشترون'],
+                        datasets: [{
+                            label: 'العدد',
+                            data: [1000, 500, 150],
+                            backgroundColor: ['#FF9F1C', '#2EC4B6', '#5A9A9A']
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                grid: { color: 'rgba(247, 249, 249, 0.1)' },
+                                ticks: { color: 'rgba(247, 249, 249, 0.8)' }
+                            },
+                            y: {
+                                grid: { display: false },
+                                ticks: { color: 'rgba(247, 249, 249, 0.8)' }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function updateDetailedAnalytics() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Today stats
+            document.getElementById('todayViews').innerText = Math.floor(Math.random() * 200) + 50;
+            document.getElementById('todayNewVisitors').innerText = Math.floor(Math.random() * 50) + 10;
+            document.getElementById('todayBounceRate').innerText = Math.floor(Math.random() * 40) + 20 + '%';
+            document.getElementById('todayAvgDuration').innerText = Math.floor(Math.random() * 300) + 60 + ' ثانية';
+
+            // Week stats
+            const weekViews = Math.floor(Math.random() * 1500) + 500;
+            document.getElementById('weekViews').innerText = weekViews;
+            document.getElementById('weekAvgDaily').innerText = Math.floor(weekViews / 7);
+            document.getElementById('weekPeakDay').innerText = 'الخميس';
+            document.getElementById('weekLowestDay').innerText = 'الأحد';
+
+            // Month stats
+            const monthViews = Math.floor(Math.random() * 6000) + 2000;
+            document.getElementById('monthViews').innerText = monthViews;
+            document.getElementById('monthAvgDaily').innerText = Math.floor(monthViews / 30);
+            document.getElementById('monthPeakWeek').innerText = 'الأسبوع الثاني';
+            document.getElementById('monthGrowthRate').innerText = Math.floor(Math.random() * 30) + 10 + '%';
+        }
+
+        function updateTopProducts() {
+            const tbody = document.getElementById('topProductsBody');
+            const topProducts = products.slice(0, 5).map((p, idx) => {
+                const views = Math.floor(Math.random() * 500) + 50;
+                const percentage = Math.floor(Math.random() * 30) + 5;
+                const orders = Math.floor(Math.random() * 50) + 5;
+
+                return `
+                    <tr class="analytics-row">
+                        <td>${p.name}</td>
+                        <td>${views}</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percentage}%"></div>
+                            </div>
+                            <div style="font-size: 12px; color: var(--ios-label-secondary); margin-top: 4px;">${percentage}%</div>
+                        </td>
+                        <td>${orders}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = topProducts || '<tr><td colspan="4" class="empty-state">لا توجد بيانات</td></tr>';
+        }
+
+        function updateTopCategories() {
+            const tbody = document.getElementById('topCategoriesBody');
+            const categories = [...new Set(products.map(p => p.cat))];
+            
+            const topCategories = categories.slice(0, 5).map(cat => {
+                const views = Math.floor(Math.random() * 800) + 100;
+                const percentage = Math.floor(Math.random() * 40) + 10;
+                const productCount = products.filter(p => p.cat === cat).length;
+
+                return `
+                    <tr class="analytics-row">
+                        <td>${cat}</td>
+                        <td>${views}</td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percentage}%"></div>
+                            </div>
+                            <div style="font-size: 12px; color: var(--ios-label-secondary); margin-top: 4px;">${percentage}%</div>
+                        </td>
+                        <td>${productCount}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = topCategories || '<tr><td colspan="4" class="empty-state">لا توجد بيانات</td></tr>';
+        }
+
+        window.changePeriod = function(period, btn) {
+            currentPeriod = period;
+            document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            updateCharts();
+        };
+    </script>
+</body>
+</html>

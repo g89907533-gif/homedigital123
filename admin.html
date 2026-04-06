@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جاري التحويل...</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0A2F2F;
+            color: #F7F9F9;
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+        }
+        .message {
+            text-align: center;
+            padding: 24px;
+            background: rgba(12, 45, 45, 0.65);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            border: 0.5px solid rgba(247, 249, 249, 0.15);
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 159, 28, 0.3);
+            border-top-color: #FF9F1C;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="message">
+        <div class="spinner"></div>
+        <p>جاري التوجيه إلى لوحة الإدارة...</p>
+        <p style="font-size: 13px; opacity: 0.7;">إذا لم يتم التوجيه تلقائياً <a href="index.html" style="color: #FF9F1C;">انقر هنا</a></p>
+    </div>
+    <script>
+        // إعادة التوجيه إلى صفحة الدخول الرئيسية
+        window.location.href = "index.html";
+    </script>
+</body>
+</html>

@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة البانرات الإعلانية - البيت الرقمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ⭐ إضافة مكتبة ضغط الصور -->
+    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+    <style>
+        :root {
+            --primary: #0A2F2F;
+            --secondary: #FF9F1C;
+            --accent: #2EC4B6;
+            --bg: #0D3A3A;
+            --card-bg: rgba(16, 55, 55, 0.9);
+            --text: #F7F9F9;
+            --text-secondary: rgba(247, 249, 249, 0.7);
+            --border: rgba(255, 159, 28, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--bg) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            padding: 8px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50px;
+            font-size: 14px;
+        }
+
+        .connection-status.online {
+            color: var(--accent);
+        }
+
+        .connection-status.offline {
+            color: #E71D36;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .preview-section {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .preview-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .banner-preview {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(135deg, rgba(255, 159, 28, 0.1) 0%, rgba(46, 196, 182, 0.1) 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            border: 2px dashed var(--border);
+        }
+
+        .banner-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .banner-preview-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            gap: 15px;
+        }
+
+        .banner-preview-placeholder i {
+            font-size: 48px;
+            color: var(--secondary);
+        }
+
+        .form-section {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .form-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .form-group label span {
+            color: var(--secondary);
+        }
+
+        .form-input {
+            background: rgba(247, 249, 249, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--text);
+            font-size: 15px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(255, 159, 28, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(255, 159, 28, 0.1);
+            border: 2px dashed var(--secondary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .file-input-label:hover {
+            background: rgba(255, 159, 28, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .file-input-label i {
+            font-size: 24px;
+        }
+
+        .image-requirements {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .compression-info {
+            font-size: 13px;
+            color: var(--accent);
+            margin-top: 8px;
+            padding: 10px;
+            background: rgba(46, 196, 182, 0.1);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .compression-info.show {
+            display: block;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary) 0%, #E88D0C 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(255, 159, 28, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 159, 28, 0.5);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(247, 249, 249, 0.1);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(247, 249, 249, 0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #E71D36 0%, #C41230 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(231, 29, 54, 0.4);
+        }
+
+        .banners-list {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .list-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .banner-count {
+            background: var(--secondary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .banner-item {
+            display: grid;
+            grid-template-columns: 120px 1fr auto;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .banner-item:hover {
+            transform: translateX(-5px);
+            border-color: var(--secondary);
+        }
+
+        .banner-thumb {
+            width: 120px;
+            height: 68px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .banner-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .banner-info h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .banner-info p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+        }
+
+        .banner-info .banner-link {
+            font-size: 12px;
+            color: var(--accent);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .banner-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 13px;
+            border-radius: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: var(--secondary);
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, var(--accent) 0%, #25A89C 100%);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            z-index: 9999;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 10px 40px rgba(46, 196, 182, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #E71D36 0%, #C41230 100%);
+            box-shadow: 0 10px 40px rgba(231, 29, 54, 0.4);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 47, 47, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 159, 28, 0.2);
+            border-top-color: var(--secondary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .banner-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .banner-thumb {
+                width: 100%;
+                height: 150px;
+                margin: 0 auto;
+            }
+
+            .banner-actions {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--secondary);
+        }
+
+        .info-box {
+            background: rgba(46, 196, 182, 0.1);
+            border: 1px solid rgba(46, 196, 182, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .info-box i {
+            color: var(--accent);
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div style="color: var(--text);">جاري الاتصال بـ Firebase...</div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <div class="container">
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-right"></i>
+            <span>العودة للمتجر</span>
+        </a>
+
+        <div class="header">
+            <h1><i class="fas fa-ad"></i> إدارة البانرات الإعلانية</h1>
+            <p>أضف، عدل، أو احذف الإعلانات الظاهرة في الموقع</p>
+            <div id="connectionStatus" class="connection-status offline">
+                <div class="status-dot"></div>
+                <span id="statusText">جاري الاتصال...</span>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <strong>ملاحظة:</strong> الصور تُضغط تلقائياً لتصبح أقل من 5 ميجابايت قبل رفعها إلى Firebase.
+        </div>
+
+        <!-- Preview Section -->
+        <div class="preview-section">
+            <div class="preview-title">
+                <i class="fas fa-eye"></i>
+                معاينة البانر (16:9)
+            </div>
+            <div class="banner-preview" id="previewContainer">
+                <div class="banner-preview-placeholder">
+                    <i class="fas fa-image"></i>
+                    <span>سيتم عرض المعاينة هنا</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add New Banner Form -->
+        <div class="form-section">
+            <div class="form-title">
+                <i class="fas fa-plus-circle"></i>
+                إضافة إعلان جديد
+            </div>
+            <form id="bannerForm">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>صورة الإعلان <span>*</span></label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="bannerImage" accept="image/*" required onchange="handleImageSelect(event)">
+                            <label for="bannerImage" class="file-input-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span id="fileLabelText">اختر صورة للإعلان</span>
+                            </label>
+                        </div>
+                        <div class="image-requirements">
+                            <i class="fas fa-info-circle"></i>
+                            يفضل استخدام صورة بقياس 1600×900 بكسل (16:9) للعرض الأمثل. 
+                            <strong>سيتم ضغط الصورة تلقائياً إذا كانت أكبر من 5 ميجابايت</strong>
+                        </div>
+                        <div id="compressionInfo" class="compression-info">
+                            <i class="fas fa-compress-alt"></i>
+                            <span id="compressionText"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bannerTitle">عنوان الإعلان (اختياري)</label>
+                        <input type="text" id="bannerTitle" class="form-input" placeholder="مثال: عروض خاصة على الهواتف">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bannerSubtitle">العنوان الفرعي (اختياري)</label>
+                        <input type="text" id="bannerSubtitle" class="form-input" placeholder="مثال: خصم يصل إلى 50%">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bannerLink">رابط الإعلان (اختياري)</label>
+                        <input type="url" id="bannerLink" class="form-input" placeholder="https://example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bannerBadge">نص الشارة (Badge) (اختياري)</label>
+                        <input type="text" id="bannerBadge" class="form-input" placeholder="مثال: جديد، عرض محدود">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-save"></i>
+                        حفظ الإعلان
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                        <i class="fas fa-undo"></i>
+                        إعادة تعيين
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Banners List -->
+        <div class="banners-list">
+            <div class="list-title">
+                <span><i class="fas fa-list"></i> الإعلانات الحالية</span>
+                <span class="banner-count" id="bannerCount">0</span>
+            </div>
+            <div id="bannersContainer">
+                <div class="empty-state">
+                    <i class="fas fa-images"></i>
+                    <h3>لا توجد إعلانات</h3>
+                    <p>جاري التحميل من Firebase...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc,
+            deleteDoc,
+            onSnapshot,
+            query,
+            orderBy,
+            enableIndexedDbPersistence
+        } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2f4rJBBBOe6qfa2EU1WfspUB5uibgwnM",
+            authDomain: "hussain-1290b.firebaseapp.com",
+            projectId: "hussain-1290b",
+            storageBucket: "hussain-1290b.firebasestorage.app",
+            messagingSenderId: "798281706738",
+            appId: "1:798281706738:web:79314f6feb2add0bf5f46b",
+            measurementId: "G-107DF3Y7ZC"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        try {
+            enableIndexedDbPersistence(db);
+        } catch (err) {
+            console.log("Persistence already enabled");
+        }
+
+        let banners = [];
+        let currentImageBase64 = '';
+        let originalFile = null;
+        let isOnline = false;
+
+        const bannersRef = collection(db, "banners");
+
+        // ⭐ دالة ضغط الصورة - استخدام المكتبة العامة
+        async function compressImage(file) {
+            const maxSizeMB = 4.5; // أقل من 5 ميجا للأمان
+            
+            // إذا كانت الصورة أصغر من الحد، لا داعي للضغط
+            if (file.size <= maxSizeMB * 1024 * 1024) {
+                return file;
+            }
+
+            const options = {
+                maxSizeMB: maxSizeMB,
+                maxWidthOrHeight: 1920, // أقصى عرض/ارتفاع
+                useWebWorker: true,
+                fileType: 'image/jpeg',
+                initialQuality: 0.8
+            };
+
+            try {
+                // ⭐ استخدام المكتبة العامة imageCompression بدلاً من browserImageCompression
+                const compressedFile = await imageCompression(file, options);
+                return compressedFile;
+            } catch (error) {
+                console.error('Error compressing image:', error);
+                throw error;
+            }
+        }
+
+        // ⭐ دالة تحويل الملف إلى Base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(e);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Setup real-time listener for banners
+        function setupBannersListener() {
+            const bannersQuery = query(bannersRef, orderBy("createdAt", "desc"));
+            onSnapshot(bannersQuery, (snapshot) => {
+                banners = [];
+                snapshot.forEach((doc) => {
+                    banners.push({ id: doc.id, ...doc.data() });
+                });
+                renderBanners();
+                updateConnectionStatus(true);
+                hideLoading();
+            }, (error) => {
+                console.error("Error loading banners:", error);
+                showToast('خطأ في تحميل البانرات: ' + error.message, 'error');
+                updateConnectionStatus(false);
+                hideLoading();
+            });
+        }
+
+        function updateConnectionStatus(online) {
+            isOnline = online;
+            const statusEl = document.getElementById('connectionStatus');
+            const textEl = document.getElementById('statusText');
+            
+            if (online) {
+                statusEl.classList.remove('offline');
+                statusEl.classList.add('online');
+                textEl.innerText = 'متصل بـ Firebase';
+            } else {
+                statusEl.classList.remove('online');
+                statusEl.classList.add('offline');
+                textEl.innerText = 'غير متصل';
+            }
+        }
+
+        function hideLoading() {
+            const loading = document.getElementById('loadingOverlay');
+            if (loading) {
+                loading.classList.add('hidden');
+            }
+        }
+
+        function renderBanners() {
+            const container = document.getElementById('bannersContainer');
+            const countEl = document.getElementById('bannerCount');
+            
+            countEl.textContent = banners.length;
+
+            if (banners.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-images"></i>
+                        <h3>لا توجد إعلانات</h3>
+                        <p>أضف إعلانك الأول من النموذج أعلاه</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = banners.map((banner, index) => `
+                <div class="banner-item">
+                    <div class="banner-thumb">
+                        <img src="${banner.image}" alt="${banner.title || 'بانر'}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 160 90%27%3E%3Crect fill=%27%230A2F2F%27 width=%27160%27 height=%2790%27/%3E%3C/svg%3E'">
+                    </div>
+                    <div class="banner-info">
+                        <h4>${banner.title || 'بدون عنوان'}</h4>
+                        <p>${banner.subtitle || 'بدون عنوان فرعي'}</p>
+                        ${banner.badge ? `<p><i class="fas fa-tag" style="color: var(--secondary);"></i> ${banner.badge}</p>` : ''}
+                        ${banner.link ? `<a href="${banner.link}" target="_blank" class="banner-link"><i class="fas fa-link"></i> ${banner.link}</a>` : ''}
+                    </div>
+                    <div class="banner-actions">
+                        <button class="btn btn-primary btn-small" onclick="previewBanner('${banner.id}')">
+                            <i class="fas fa-eye"></i> معاينة
+                        </button>
+                        <button class="btn btn-danger btn-small" onclick="deleteBanner('${banner.id}')">
+                            <i class="fas fa-trash"></i> حذف
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ⭐ Handle image selection with compression
+        window.handleImageSelect = async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            originalFile = file;
+            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            
+            document.getElementById('fileLabelText').textContent = file.name;
+            
+            const compressionInfo = document.getElementById('compressionInfo');
+            const compressionText = document.getElementById('compressionText');
+
+            try {
+                // Show compression info if needed
+                if (file.size > 4.5 * 1024 * 1024) {
+                    compressionInfo.classList.add('show');
+                    compressionText.innerHTML = `جاري ضغط الصورة... (${fileSizeMB} ميجابايت)`;
+                }
+
+                // Compress image
+                const compressedFile = await compressImage(file);
+                const compressedSizeMB = (compressedFile.size / (1024 * 1024)).toFixed(2);
+                
+                // Convert to base64
+                currentImageBase64 = await fileToBase64(compressedFile);
+                
+                // Update compression info
+                if (file.size > 4.5 * 1024 * 1024) {
+                    compressionText.innerHTML = `
+                        <i class="fas fa-check-circle"></i> 
+                        تم الضغط من ${fileSizeMB} إلى ${compressedSizeMB} ميجابايت
+                    `;
+                    setTimeout(() => {
+                        compressionInfo.classList.remove('show');
+                    }, 3000);
+                }
+
+                // Update preview
+                updatePreview(currentImageBase64);
+                
+            } catch (error) {
+                console.error('Error processing image:', error);
+                showToast('خطأ في معالجة الصورة: ' + error.message, 'error');
+            }
+        };
+
+        function updatePreview(imageSrc) {
+            const container = document.getElementById('previewContainer');
+            const title = document.getElementById('bannerTitle').value || 'عنوان الإعلان';
+            const subtitle = document.getElementById('bannerSubtitle').value || 'العنوان الفرعي';
+            const badge = document.getElementById('bannerBadge').value;
+
+            container.innerHTML = `
+                ${badge ? `<span style="position: absolute; top: 16px; right: 16px; background: linear-gradient(135deg, #E71D36 0%, #C41230 100%); color: white; padding: 6px 16px; border-radius: 50px; font-size: 12px; font-weight: 800; z-index: 10;">${badge}</span>` : ''}
+                <img src="${imageSrc}" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 47, 47, 0.9) 0%, transparent 60%); display: flex; flex-direction: column; justify-content: flex-end; padding: 24px;">
+                    <h3 style="font-size: 24px; font-weight: 800; color: white; margin-bottom: 8px;">${title}</h3>
+                    <p style="font-size: 16px; color: rgba(255, 255, 255, 0.9);">${subtitle}</p>
+                </div>
+            `;
+        }
+
+        // Form submission
+        document.getElementById('bannerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!currentImageBase64) {
+                showToast('الرجاء اختيار صورة للإعلان', 'error');
+                return;
+            }
+
+            // ⭐ Check final size
+            const base64Size = Math.ceil(currentImageBase64.length * 0.75); // Approximate byte size
+            const base64SizeMB = (base64Size / (1024 * 1024)).toFixed(2);
+            
+            if (base64Size > 5 * 1024 * 1024) {
+                showToast(`الصورة كبيرة جداً (${base64SizeMB} ميجابايت). الحد الأقصى 5 ميجابايت.`, 'error');
+                return;
+            }
+
+            if (!isOnline) {
+                showToast('غير متصل بـ Firebase. يرجى التحقق من الاتصال.', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الحفظ...';
+
+            try {
+                const newBanner = {
+                    image: currentImageBase64,
+                    title: document.getElementById('bannerTitle').value || '',  // اختياري: إذا كان فارغاً نخزن سلسلة فارغة
+                    subtitle: document.getElementById('bannerSubtitle').value || '',
+                    link: document.getElementById('bannerLink').value || '',
+                    badge: document.getElementById('bannerBadge').value || '',
+                    createdAt: new Date().toISOString()
+                };
+
+                const bannerRef = doc(bannersRef);
+                await setDoc(bannerRef, newBanner);
+
+                showToast('تم حفظ الإعلان بنجاح في Firebase!');
+                resetForm();
+            } catch (error) {
+                console.error('Error saving banner:', error);
+                showToast('خطأ في حفظ الإعلان: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> حفظ الإعلان';
+            }
+        });
+
+        window.resetForm = function() {
+            document.getElementById('bannerForm').reset();
+            currentImageBase64 = '';
+            originalFile = null;
+            document.getElementById('fileLabelText').textContent = 'اختر صورة للإعلان';
+            document.getElementById('compressionInfo').classList.remove('show');
+            document.getElementById('previewContainer').innerHTML = `
+                <div class="banner-preview-placeholder">
+                    <i class="fas fa-image"></i>
+                    <span>سيتم عرض المعاينة هنا</span>
+                </div>
+            `;
+        };
+
+        window.previewBanner = function(id) {
+            const banner = banners.find(b => b.id === id);
+            if (!banner) return;
+
+            updatePreview(banner.image);
+            document.getElementById('bannerTitle').value = banner.title || '';
+            document.getElementById('bannerSubtitle').value = banner.subtitle || '';
+            document.getElementById('bannerLink').value = banner.link || '';
+            document.getElementById('bannerBadge').value = banner.badge || '';
+            currentImageBase64 = banner.image;
+            document.getElementById('fileLabelText').textContent = 'صورة محفوظة';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.deleteBanner = async function(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا الإعلان؟')) return;
+
+            if (!isOnline) {
+                showToast('غير متصل بـ Firebase. يرجى التحقق من الاتصال.', 'error');
+                return;
+            }
+
+            try {
+                await deleteDoc(doc(db, "banners", id));
+                showToast('تم حذف الإعلان بنجاح');
+            } catch (error) {
+                console.error('Error deleting banner:', error);
+                showToast('خطأ في حذف الإعلان: ' + error.message, 'error');
+            }
+        };
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = type === 'error' ? `<i class="fas fa-exclamation-circle"></i> ${message}` : `<i class="fas fa-check-circle"></i> ${message}`;
+            toast.className = 'toast ' + (type === 'error' ? 'error' : '');
+            
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Update preview on input change
+        ['bannerTitle', 'bannerSubtitle', 'bannerBadge'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => {
+                if (currentImageBase64) {
+                    updatePreview(currentImageBase64);
+                }
+            });
+        });
+
+        // Network status
+        window.addEventListener('online', () => updateConnectionStatus(true));
+        window.addEventListener('offline', () => updateConnectionStatus(false));
+
+        // Initialize
+        setupBannersListener();
+    </script>
+</body>
+</html>
